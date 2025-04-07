@@ -38,7 +38,7 @@ export default function About() {
           </div>
 
           {/* Button */}
-          <Link href="/dashboard/customers">
+          <Link href="/dashboard/account">
             <button className="mt-6 bg-[#78c0b3] hover:bg-[#5aa195] text-white px-6 py-2 rounded-full font-semibold shadow">
               Shop Now
             </button>
