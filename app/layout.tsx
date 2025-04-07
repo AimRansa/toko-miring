@@ -1,7 +1,7 @@
+import '@/ui/global.css'; // Fix path
+import { inter } from '@/ui/fonts'; // Fix path pakai alias @
 
-import '@/app/ui/global.css';
-import { inter } from '@/app/ui/fonts';
-
+// Layout komponen utama
 export default function RootLayout({
   children,
 }: {
@@ -9,7 +9,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antiliased`}>{children} </body>
+      <body className={`${inter.className} antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }
