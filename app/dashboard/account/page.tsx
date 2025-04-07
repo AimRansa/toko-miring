@@ -39,7 +39,7 @@ export default function FerrariPage() {
         <span className="text-lg font-semibold">menu</span>
         <nav className="relative flex gap-6 items-center">
           <Link href="/dashboard/about">About Us</Link>
-          <Link href="#">Cart</Link>
+          <Link href="/dashboard/cart">Cart</Link>
           <Link href="#">Help</Link>
 
           {!isLoggedIn ? (

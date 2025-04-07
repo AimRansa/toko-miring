@@ -1,12 +1,12 @@
-import SideNav from '@/app/ui/dashboard/sidenav';
+import "@/app/ui/global.css";
+import { inter } from "@/app/ui/fonts";
 
-export default function Layout({children}: { children:React.ReactNode}) {
-    return (
-        <div className="flex h-screen flex-col md:flex-row md:over-flow-hidden">
-            <div className="w-full flex-none md:w-64">
-                <SideNav />
-            </div>
-            <div className="flex-grow p-6 md:overflow-y-auto md:p-12">{children}</div>
-        </div>
-    );
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={inter.className}>
+      <body>
+        <main>{children}</main>
+      </body>
+    </html>
+  );
 }
