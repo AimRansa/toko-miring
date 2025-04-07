@@ -32,17 +32,18 @@ export default function About() {
               <span>081352119999</span>
             </div>
             <div className="flex items-center gap-2">
-              <Image src="/location.png" alt="Lokasi" width={20} height={20} />
+              <Image src="/lokasi.png" alt="Lokasi" width={20} height={20} />
               <span>Seluruh Indonesia</span>
             </div>
           </div>
 
           {/* Button */}
-          <Link href="/dashboard/account">
+          <Link href="/dashboard/profilkita">
             <button className="mt-6 bg-[#78c0b3] hover:bg-[#5aa195] text-white px-6 py-2 rounded-full font-semibold shadow">
-              Shop Now
+              Our Profile
             </button>
           </Link>
+
 
 
         </div>
@@ -50,7 +51,7 @@ export default function About() {
         {/* Gambar Rangga */}
         <div className="flex-shrink-0">
           <Image
-            src="/rangga-ferrari.png"
+            src="/foto rangga.png"
             alt="Rangga dan Ferrari"
             width={300}
             height={300}
