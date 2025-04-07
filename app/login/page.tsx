@@ -52,7 +52,7 @@ export default function LoginPage() {
             </div>
 
             {/* Login Button */}
-            <Link href="/dashboard/account">
+            <Link href="/dashboard/customers/ferrari">
             <button
               onClick={handleLogin}
               className="w-full bg-gradient-to-b from-[#5b7773] to-[#1f2b2a] text-white font-semibold py-2 mt-4 rounded-full hover:opacity-90 transition"
