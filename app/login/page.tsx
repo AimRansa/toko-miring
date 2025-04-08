@@ -72,13 +72,11 @@ export default function LoginPage() {
             </div>
 
             {/* Login Button */}
-            <button
-              onClick={handleLogin}
-              className="w-full bg-gradient-to-b from-[#5b7773] to-[#1f2b2a] text-white font-semibold py-2 mt-4 rounded-full hover:opacity-90 transition"
-            >
-              Login
-            </button>
-          </div>
+             <Link href="/dashboard/customers/ferrari">
+              <a className="w-full bg-gradient-to-b from-[#5b7773] to-[#1f2b2a] text-white font-semibold py-2 mt-4 rounded-full hover:opacity-90 transition block text-center">
+                Login
+              </a>
+              </Link>
 
           <div className="flex justify-between text-xs text-white mt-6">
             <Link href="/signup" className="hover:underline">Create an account</Link>

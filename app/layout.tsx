@@ -1,7 +1,6 @@
 import '@/ui/global.css'; // Fix path
-import { inter } from '@/ui/fonts'; // Fix path pakai alias @
+import { inter } from '@/ui/fonts'; // Fix path pakai alias
 
-// Layout komponen utama
 export default function RootLayout({
   children,
 }: {
@@ -10,6 +9,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
+        {/* Navbar dihapus */}
         {children}
       </body>
     </html>
