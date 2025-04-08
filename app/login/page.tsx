@@ -18,7 +18,7 @@ export default function LoginPage() {
     if (role === 'admin') {
       router.push('/admin/dashboard')
     } else {
-      router.push('/dashboard/account')
+      router.push('/dashboard/customers/ferrari')
     }
   }
 
@@ -27,7 +27,7 @@ export default function LoginPage() {
       <div className="flex flex-col md:flex-row items-center bg-transparent rounded-3xl p-6 md:p-12 shadow-2xl backdrop-blur-md">
         {/* Logo Section */}
         <div className="mb-6 md:mb-0 md:mr-12">
-          <Image src="/ferrari.png" alt="Toko Miring Logo" width={250} height={250} className="rounded-3xl" />
+          <Image src="/images/logos/toko.jpg" alt="Toko Miring Logo" width={250} height={250} className="rounded-3xl" />
         </div>
 
         {/* Login Form */}
@@ -59,7 +59,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Role (sementara, untuk testing) */}
+            {/* Role */}
             <div>
               <select
                 value={role}
@@ -72,15 +72,17 @@ export default function LoginPage() {
             </div>
 
             {/* Login Button */}
-             <Link href="/dashboard/customers/ferrari">
-              <a className="w-full bg-gradient-to-b from-[#5b7773] to-[#1f2b2a] text-white font-semibold py-2 mt-4 rounded-full hover:opacity-90 transition block text-center">
-                Login
-              </a>
-              </Link>
+            <button
+              onClick={handleLogin}
+              className="w-full bg-gradient-to-b from-[#5b7773] to-[#1f2b2a] text-white font-semibold py-2 mt-4 rounded-full hover:opacity-90 transition block text-center"
+            >
+              Login
+            </button>
 
-          <div className="flex justify-between text-xs text-white mt-6">
-            <Link href="/signup" className="hover:underline">Create an account</Link>
-            <Link href="/reset" className="hover:underline">Forgot Password</Link>
+            <div className="flex justify-between text-xs text-white mt-6">
+              <Link href="/signup" className="hover:underline">Create an account</Link>
+              <Link href="/reset" className="hover:underline">Forgot Password</Link>
+            </div>
           </div>
         </div>
       </div>

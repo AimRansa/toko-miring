@@ -43,7 +43,7 @@ export default function PorschePage() {
   return (
     <main className="min-h-screen px-8 py-6 bg-gradient-to-b from-white to-teal-100">
       <header className="flex justify-between items-center mb-8">
-        <span className="text-lg font-semibold">menu</span>
+        <span className="text-lg font-semibold"></span>
         <nav className="relative flex gap-6 items-center">
           <Link href="/dashboard/about">About Us</Link>
           <Link href="/dashboard/cart">Cart</Link>
