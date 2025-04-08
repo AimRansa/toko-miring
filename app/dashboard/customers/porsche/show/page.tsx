@@ -7,32 +7,32 @@ const porscheCars = [
   {
     name: "718 Cayman",
     price: "$72,800",
-    image: "/images/porsche/718-cayman.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "718 Boxster",
     price: "$74,900",
-    image: "/images/porsche/718-boxster.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "718 Cayman Style Edition",
     price: "$79,200",
-    image: "/images/porsche/718-cayman-style.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "718 Boxster Style Edition",
     price: "$81,300",
-    image: "/images/porsche/718-boxster-style.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "718 Cayman S",
     price: "$84,800",
-    image: "/images/porsche/718-cayman-s.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "718 Boxster S",
     price: "$86,900",
-    image: "/images/porsche/718-boxster-s.png",
+    image: "/images/cars/ferrari.png",
   },
 ];
 

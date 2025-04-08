@@ -7,22 +7,22 @@ const ferrariCars = [
   {
     name: "Ferrari Roma",
     price: "$226,000",
-    image: "/images/ferrari/roma.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "Ferrari 296 GTB",
     price: "$338,000",
-    image: "/images/ferrari/296gtb.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "Ferrari SF90 Stradale",
     price: "$524,000",
-    image: "/images/ferrari/sf90.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "Ferrari Portofino M",
     price: "$245,000",
-    image: "/images/ferrari/portofino.png",
+    image: "/images/cars/ferrari.png",
   },
 ];
 

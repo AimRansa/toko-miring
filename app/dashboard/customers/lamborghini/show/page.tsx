@@ -7,22 +7,22 @@ const lamborghiniCars = [
   {
     name: "Lamborghini Aventador",
     price: "$498,000",
-    image: "/images/lamborghini/aventador.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "Lamborghini Huracán",
     price: "$261,000",
-    image: "/images/lamborghini/huracan.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "Lamborghini Revuelto",
     price: "$604,000",
-    image: "/images/lamborghini/revuelto.png",
+    image: "/images/cars/ferrari.png",
   },
   {
     name: "Lamborghini Urus",
     price: "$230,000",
-    image: "/images/lamborghini/urus.png",
+    image: "/images/cars/ferrari.png",
   },
 ];
 
