@@ -15,7 +15,7 @@ export const ProfileHeader: React.FC = () => {
 
       {/* Button "PROFIL TOKO" */}
       <div className="absolute right-5 top-5">
-        <Link href="/dashboard/account">
+        <Link href="/dashboard/customers/ferrari">
           <button className="bg-[#a3b8b5] hover:bg-[#88a29e] text-[#0f1e29] font-semibold px-6 py-2 rounded-lg shadow-md text-lg">
             SHOP NOW
           </button>

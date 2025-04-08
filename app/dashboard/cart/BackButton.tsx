@@ -7,7 +7,7 @@ export const BackButton: React.FC = () => {
   const router = useRouter();
 
   const handleBack = () => {
-    router.push('/dashboard/account'); // Ganti dengan path account kamu
+    router.push('/dashboard/customers/ferrari'); // Ganti dengan path account kamu
   };
 
   return (
