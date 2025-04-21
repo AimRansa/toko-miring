@@ -1,5 +1,5 @@
-import '@/app/ui/global.css';
-import { inter } from '@/app/ui/fonts';
+import "@/ui/global.css";
+import { inter } from "@/ui/fonts";
 
 export default function RootLayout({
   children,
@@ -7,10 +7,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased`}>
-        {/* Navbar dihapus */}
-        {children}
+    <html lang="en" className={inter.className}>
+      <body>
+        <main>{children}</main>
       </body>
     </html>
   );

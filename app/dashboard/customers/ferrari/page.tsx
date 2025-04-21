@@ -43,10 +43,10 @@ export default function FerrariPage() {
   return (
     <main className="min-h-screen px-8 py-6 bg-gradient-to-b from-white to-teal-100">
       <header className="flex justify-between items-center mb-8">
-        <span className="text-lg font-semibold">menu</span>
+        <span className="text-lg font-semibold"></span>
         <nav className="relative flex gap-6 items-center">
           <Link href="/dashboard/about">About Us</Link>
-          <Link href="#">Cart</Link>
+          <Link href="/dashboard/cart">Cart</Link>
           <Link href="#">Help</Link>
 
           {!isLoggedIn ? (
@@ -90,7 +90,7 @@ export default function FerrariPage() {
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
         <div>
-          <h1 className="text-5xl font-bold mb-4">porsche</h1>
+          <h1 className="text-5xl font-bold mb-4">Ferrari</h1>
           <p className="mb-4 text-sm text-gray-800">
             A Ferrari is a symbol of luxury, speed, and precision. Known for its powerful engines and sleek design, it delivers an unmatched driving experience. The prancing horse logo represents racing excellence and innovation.
           </p>

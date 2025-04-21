@@ -1,13 +1,35 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function FerrariPage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const status = localStorage.getItem("isLoggedIn") === "true";
+    setIsLoggedIn(status);
+  }, []);
+
+  const handleCartClick = () => {
+    if (!isLoggedIn) {
+      alert("Please log in to access your cart.");
+    } else {
+      router.push("/dashboard/cart");
+    }
+  };
+
   return (
     <main className="min-h-screen px-6 py-10 bg-gradient-to-b from-white to-teal-100 font-sans">
       <header className="flex justify-end items-center mb-16">
         <nav className="flex gap-8 items-center text-sm font-semibold">
           <Link href="/dashboard/about">About Us</Link>
-          <Link href="#">Cart</Link>
+          <button onClick={handleCartClick} className="hover:underline">
+            Cart
+          </button>
           <Link href="#">Help</Link>
           <Link href="/login">
             <button className="bg-black text-white px-4 py-1 rounded-full">
@@ -35,7 +57,7 @@ export default function FerrariPage() {
           <Image
             src="/ferrari.png"
             alt="Ferrari Car"
-            width={1000} // diperbesar dari sebelumnya
+            width={1000}
             height={500}
             className="object-contain"
           />
@@ -45,7 +67,7 @@ export default function FerrariPage() {
       <div className="flex justify-center md:justify-start gap-8 mt-16">
         <Link href="/dashboard/lamborghini">
           <Image
-            src="/logos/lamborghini.png"
+            src="/images/logos/lamborghini.png"
             alt="Lamborghini Logo"
             width={50}
             height={50}
@@ -53,7 +75,7 @@ export default function FerrariPage() {
         </Link>
         <Link href="/dashboard/porsche">
           <Image
-            src="/logos/porsche.png"
+            src="/images/logos/porsche.png"
             alt="Porsche Logo"
             width={50}
             height={50}
@@ -61,30 +83,12 @@ export default function FerrariPage() {
         </Link>
         <Link href="/dashboard/ferrari">
           <Image
-            src="/logos/ferrari.png"
+            src="/images/logos/ferrari.png"
             alt="Ferrari Logo"
             width={50}
             height={50}
           />
         </Link>
-        <Image
-          src="/logos/mercedes.png"
-          alt="Mercedes Logo"
-          width={50}
-          height={50}
-        />
-        <Image
-          src="/logos/bmw.png"
-          alt="BMW Logo"
-          width={50}
-          height={50}
-        />
-        <Image
-          src="/logos/rollsroyce.png"
-          alt="Rolls Royce Logo"
-          width={50}
-          height={50}
-        />
       </div>
     </main>
   );
