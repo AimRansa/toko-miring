@@ -72,7 +72,7 @@ export default function SignUpPage() {
 
         {/* Logo Section */}
         <div className="mt-6 md:mt-0 md:ml-12">
-          <Image src="/ferrari.png" alt="Toko Miring Logo" width={250} height={250} className="rounded-3xl" />
+          <Image src="/images/logos/toko.jpg" alt="Toko Miring Logo" width={250} height={250} className="rounded-3xl" />
         </div>
       </div>
     </main>

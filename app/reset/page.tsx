@@ -74,7 +74,7 @@ export default function ResetPassword() {
         {/* Logo Section */}
         <div className="mt-6 md:mt-0">
           <Image
-            src="/ferrari.png"
+            src="/images/logos/toko.jpg"
             alt="Toko Miring Logo"
             width={250}
             height={250}
