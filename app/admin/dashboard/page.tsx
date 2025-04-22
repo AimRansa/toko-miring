@@ -1,6 +1,5 @@
 "use client";
 
-
 import { ShoppingCart, Car, Users } from "lucide-react";
 
 export default function DashboardPage() {
@@ -10,25 +9,26 @@ export default function DashboardPage() {
 
       {/* Kartu Statistik */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Car size={32} className="text-blue-600" />
-          <div>
-            <p className="text-sm text-gray-500">Total Mobil</p>
-            <h2 className="text-xl font-bold text-gray-800">15</h2>
-          </div>
-        
-          <Users size={32} className="text-green-600" />
-          <div>
-            <p className="text-sm text-gray-500">Pelanggan</p>
-            <h2 className="text-xl font-bold text-gray-800">108</h2>
-          </div>
-        
+        {/* Kartu Mobil */}
+        <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center text-center">
+          <Car size={32} className="text-blue-600 mb-2" />
+          <p className="text-sm text-gray-500">Total Mobil</p>
+          <h2 className="text-xl font-bold text-gray-800">15</h2>
+        </div>
 
-        
-          <ShoppingCart size={32} className="text-red-600" />
-          <div>
-            <p className="text-sm text-gray-500">Pesanan</p>
-            <h2 className="text-xl font-bold text-gray-800">42</h2>
-          </div>
+        {/* Kartu Pelanggan */}
+        <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center text-center">
+          <Users size={32} className="text-green-600 mb-2" />
+          <p className="text-sm text-gray-500">Pelanggan</p>
+          <h2 className="text-xl font-bold text-gray-800">108</h2>
+        </div>
+
+        {/* Kartu Pesanan */}
+        <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center text-center">
+          <ShoppingCart size={32} className="text-red-600 mb-2" />
+          <p className="text-sm text-gray-500">Pesanan</p>
+          <h2 className="text-xl font-bold text-gray-800">42</h2>
+        </div>
       </div>
 
       {/* Bagian Laporan Sederhana */}

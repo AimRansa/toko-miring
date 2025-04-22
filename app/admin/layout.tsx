@@ -1,16 +1,24 @@
 // app/admin/layout.tsx
+'use client'
+
+import React from 'react'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
-import React from 'react'
+import { ProductProvider } from './context/ProductContext'
+import { TransaksiProvider } from './context/TransaksiContext' 
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <main className="flex-1 p-5 max-md:p-2.5 bg-gradient-to-b from-[#e6f0f2] to-[#4d6e71]">
-        <Header />
-        {children}
-      </main>
-    </div>
+    <ProductProvider>
+      <TransaksiProvider>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <main className="flex-1 p-5 max-md:p-2.5 bg-gradient-to-b from-[#e6f0f2] to-[#4d6e71]">
+            <Header />
+            {children}
+          </main>
+        </div>
+      </TransaksiProvider>
+    </ProductProvider>
   )
 }
