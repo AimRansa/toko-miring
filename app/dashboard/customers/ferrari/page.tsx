@@ -41,9 +41,9 @@ export default function FerrariPage() {
   };
 
   return (
-    <main className="min-h-screen px-8 py-6 bg-gradient-to-b from-white to-teal-100">
+    <main className="min-h-screen flex flex-col px-8 py-6 bg-gradient-to-b from-white to-teal-100 flex-grow">
       <header className="flex justify-between items-center mb-8">
-        <span className="text-lg font-semibold"></span>
+        <span className="text-lg font-semibold">Ferrari</span>
         <nav className="relative flex gap-6 items-center">
           <Link href="/dashboard/about">About Us</Link>
           <Link href="/dashboard/cart">Cart</Link>
@@ -103,10 +103,7 @@ export default function FerrariPage() {
         </div>
 
         <div
-          className={`transition-all duration-700 ease-out transform ${carVisible
-            ? "translate-x-0 opacity-100"
-            : "translate-x-32 opacity-0"
-            }`}
+          className={`transition-all duration-700 ease-out transform ${carVisible ? "translate-x-0 opacity-100" : "translate-x-32 opacity-0"}`}
         >
           <Image
             src="/ferrari.png"
@@ -117,12 +114,13 @@ export default function FerrariPage() {
         </div>
       </section>
 
+      {/* Logos section moved below the "Show more cars" button */}
       <section className="mt-12">
         <div className="flex justify-start gap-6">
-          {[
+          {[ 
             { href: "/dashboard/customers/lamborghini", src: "/images/logos/lamborghini.png", alt: "Lamborghini Logo", isActive: false },
             { href: "/dashboard/customers/porsche", src: "/images/logos/porsche.png", alt: "Porsche Logo", isActive: false },
-            { href: "/dashboard/customers/ferrari", src: "/images/logos/ferrari.png", alt: "Ferrari Logo", isActive: true },
+            { href: "/dashboard/customers/ferrari", src: "/images/logos/ferrari.png", alt: "Ferrari Logo", isActive: true }
           ].map((logo) => (
             <Link key={logo.alt} href={logo.href}>
               <div className={`relative w-10 h-10 transition-all duration-300 ${!logo.isActive ? "grayscale hover:grayscale-0" : ""}`}>
@@ -137,6 +135,46 @@ export default function FerrariPage() {
           ))}
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-black text-white py-6 mt-auto px-6 md:px-12">
+        <div className="container mx-auto flex flex-col md:flex-row justify-between">
+          <div className="mb-4 md:mb-0">
+            <h3 className="text-lg font-semibold">Current Region / Language</h3>
+            <p>United States / English</p>
+            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-white hover:text-black transition">
+              Change
+            </button>
+          </div>
+          <div className="mb-4 md:mb-0">
+            <h3 className="text-lg font-semibold">Newsletter</h3>
+            <p>Latest news directly in your inbox.</p>
+            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-white hover:text-black transition">
+              Subscribe
+            </button>
+          </div>
+          <div className="mb-4 md:mb-0">
+            <h3 className="text-lg font-semibold">Locations & Contacts</h3>
+            <p>Do you have any questions?</p>
+            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-white hover:text-black transition">
+              Get in touch
+            </button>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Social Media</h3>
+            <div className="flex gap-3 mt-2">
+              <span className="cursor-pointer hover:underline">FB</span>
+              <span className="cursor-pointer hover:underline">IG</span>
+              <span className="cursor-pointer hover:underline">PN</span>
+              <span className="cursor-pointer hover:underline">YT</span>
+              <span className="cursor-pointer hover:underline">TW</span>
+            </div>
+          </div>
+        </div>
+        <div className="text-center mt-6 border-t border-gray-700 pt-4">
+          © 2025 Toko Miring. All rights reserved.
+        </div>
+      </footer>
     </main>
   );
 }
