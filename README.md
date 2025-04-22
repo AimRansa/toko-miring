@@ -2,6 +2,7 @@
 For more information, see the [course curriculum](https://nextjs.org/learn) on the Next.js Website.
 C_12.txt
 
+Kelompok 12 Kelas C
 Efraim Emmanuel Ransa / 231712251
 Steve Anggana / 231712222
 Stefhen Fernandio / 231712218
