@@ -72,7 +72,7 @@ export default function PorschePage() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">Customer Reviews</h2>
           <button
-            onClick={() => router.push("/testimoni")}
+            onClick={() => router.push("/dashboard/testimoni")}
             className="text-blue-600 hover:underline text-sm"
           >
             Show All →

@@ -29,8 +29,12 @@ const ferrariCars = [
 export default function FerrariPage() {
   const router = useRouter();
 
+  const handleCarClick = (carName: string) => {
+    router.push(`/dashboard//customers/ferrari/detail`);
+  };
+
   return (
-    <main className="min-h-screen p-8 bg-white">
+    <main className="min-h-screen p-8 bg-gradient-to-b from-white to-teal-100">
       <button
         onClick={() => router.back()}
         className="mb-4 px-4 py-2 text-sm bg-black text-white rounded-full hover:bg-gray-800 transition"
@@ -42,7 +46,11 @@ export default function FerrariPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {ferrariCars.map((car) => (
-          <div key={car.name} className="flex flex-col items-center text-center">
+          <div 
+            key={car.name} 
+            className="flex flex-col items-center text-center cursor-pointer hover:scale-105 transition"
+            onClick={() => handleCarClick(car.name)}
+          >
             <div className="w-full h-48 relative">
               <Image
                 src={car.image}
@@ -62,7 +70,7 @@ export default function FerrariPage() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">Customer Reviews</h2>
           <button
-            onClick={() => router.push("/testimoni")}
+            onClick={() => router.push("/dashboard/testimoni")}
             className="text-blue-600 hover:underline text-sm"
           >
             Show All →
@@ -70,7 +78,6 @@ export default function FerrariPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Sample Testimonials - Replace with dynamic content if needed */}
           <div className="p-4 border rounded-xl shadow-sm bg-gray-50">
             <p className="text-gray-700 italic">"The Ferrari Roma exceeded all my expectations!"</p>
             <p className="mt-2 text-sm text-gray-500">– Esep.</p>

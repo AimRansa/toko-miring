@@ -12,11 +12,11 @@ export default function LoginPage() {
 
   const handleLogin = () => {
     // Cek kredensial untuk user dan admin
-    if (email === 'user' && password === 'user') {
+    if (email === 'user123' && password === '12345') {
       localStorage.setItem('isLoggedIn', 'true')
       localStorage.setItem('role', 'user')
       router.push('/dashboard/customers/ferrari')
-    } else if (email === 'admin' && password === 'admin') {
+    } else if (email === 'admin123' && password === '12345') {
       localStorage.setItem('isLoggedIn', 'true')
       localStorage.setItem('role', 'admin')
       router.push('/admin/dashboard')
