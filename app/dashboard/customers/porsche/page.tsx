@@ -111,7 +111,7 @@ export default function PorschePage() {
             }`}
         >
           <Image
-            src="/porsche.png"
+            src="/images/cars/porsche.png"
             alt="Porsche Car"
             width={800}
             height={400}

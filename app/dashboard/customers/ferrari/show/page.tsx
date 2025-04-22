@@ -56,6 +56,31 @@ export default function FerrariPage() {
           </div>
         ))}
       </div>
+
+      {/* Review Section */}
+      <section className="mt-16">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold">Customer Reviews</h2>
+          <button
+            onClick={() => router.push("/testimoni")}
+            className="text-blue-600 hover:underline text-sm"
+          >
+            Show All →
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Sample Testimonials - Replace with dynamic content if needed */}
+          <div className="p-4 border rounded-xl shadow-sm bg-gray-50">
+            <p className="text-gray-700 italic">"The Ferrari Roma exceeded all my expectations!"</p>
+            <p className="mt-2 text-sm text-gray-500">– Esep.</p>
+          </div>
+          <div className="p-4 border rounded-xl shadow-sm bg-gray-50">
+            <p className="text-gray-700 italic">"Smooth drive and luxurious feel. Worth every penny."</p>
+            <p className="mt-2 text-sm text-gray-500">– Aim.</p>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

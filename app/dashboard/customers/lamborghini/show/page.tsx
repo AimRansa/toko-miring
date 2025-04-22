@@ -7,22 +7,22 @@ const lamborghiniCars = [
   {
     name: "Lamborghini Aventador",
     price: "$498,000",
-    image: "/images/cars/ferrari.png",
+    image: "/images/cars/lamborghini.png",
   },
   {
     name: "Lamborghini Huracán",
     price: "$261,000",
-    image: "/images/cars/ferrari.png",
+    image: "/images/cars/lamborghini.png",
   },
   {
     name: "Lamborghini Revuelto",
     price: "$604,000",
-    image: "/images/cars/ferrari.png",
+    image: "/images/cars/lamborghini.png",
   },
   {
     name: "Lamborghini Urus",
     price: "$230,000",
-    image: "/images/cars/ferrari.png",
+    image: "/images/cars/lamborghini.png",
   },
 ];
 
@@ -56,6 +56,31 @@ export default function LamborghiniPage() {
           </div>
         ))}
       </div>
+
+      {/* Review Section */}
+      <section className="mt-16">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold">Customer Reviews</h2>
+          <button
+            onClick={() => router.push("/testimoni")}
+            className="text-blue-600 hover:underline text-sm"
+          >
+            Show All →
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Sample Testimonials - Replace or expand as needed */}
+          <div className="p-4 border rounded-xl shadow-sm bg-gray-50">
+            <p className="text-gray-700 italic">"Driving the Aventador is a dream come true!"</p>
+            <p className="mt-2 text-sm text-gray-500">– Esep.</p>
+          </div>
+          <div className="p-4 border rounded-xl shadow-sm bg-gray-50">
+            <p className="text-gray-700 italic">"The Huracán is both powerful and stylish. Love it!"</p>
+            <p className="mt-2 text-sm text-gray-500">– Aim.</p>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
