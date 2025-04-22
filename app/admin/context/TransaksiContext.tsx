@@ -9,6 +9,7 @@ interface Transaksi {
   tanggal: string;
   total: string;
   status: string;
+  produk: string;
 }
 
 interface TransaksiContextType {

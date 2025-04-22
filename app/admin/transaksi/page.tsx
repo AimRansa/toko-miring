@@ -8,18 +8,19 @@ export default function TransaksiPage() {
   const [editId, setEditId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({
     pelanggan: '',
+    produk: '',
     tanggal: '',
     total: '',
     status: '',
   })
 
-  // Tambahkan data dummy saat pertama kali komponen dimount
   useEffect(() => {
     if (transaksi.length === 0) {
       setTransaksi([
         {
           id: '001',
           pelanggan: 'Andi Wijaya',
+          produk: 'Ferari',
           tanggal: '2025-04-20',
           total: '150000',
           status: 'Sukses',
@@ -27,6 +28,7 @@ export default function TransaksiPage() {
         {
           id: '002',
           pelanggan: 'Siti Lestari',
+          produk: 'Lamborgini',
           tanggal: '2025-04-21',
           total: '200000',
           status: 'Pending',
@@ -34,6 +36,7 @@ export default function TransaksiPage() {
         {
           id: '003',
           pelanggan: 'Budi Santoso',
+          produk: 'Porsche',
           tanggal: '2025-04-22',
           total: '175000',
           status: 'Gagal',
@@ -46,6 +49,7 @@ export default function TransaksiPage() {
     setEditId(item.id)
     setEditForm({
       pelanggan: item.pelanggan,
+      produk: item.produk,
       tanggal: item.tanggal,
       total: item.total,
       status: item.status,
@@ -54,7 +58,9 @@ export default function TransaksiPage() {
 
   const handleSave = (id: string) => {
     setTransaksi((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...editForm } : item))
+      prev.map((item) =>
+        item.id === id ? { ...item, ...editForm } : item
+      )
     )
     setEditId(null)
   }
@@ -82,6 +88,7 @@ export default function TransaksiPage() {
           <tr>
             <th className="px-4 py-2 text-left">ID Transaksi</th>
             <th className="px-4 py-2 text-left">Pelanggan</th>
+            <th className="px-4 py-2 text-left">Nama Produk</th>
             <th className="px-4 py-2 text-left">Tanggal</th>
             <th className="px-4 py-2 text-left">Total</th>
             <th className="px-4 py-2 text-left">Status</th>
@@ -104,6 +111,20 @@ export default function TransaksiPage() {
                   />
                 ) : (
                   item.pelanggan
+                )}
+              </td>
+              <td className="px-4 py-2">
+                {editId === item.id ? (
+                  <input
+                    type="text"
+                    className="border rounded px-2 py-1 w-full"
+                    value={editForm.produk}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, produk: e.target.value })
+                    }
+                  />
+                ) : (
+                  item.produk
                 )}
               </td>
               <td className="px-4 py-2">
@@ -186,7 +207,7 @@ export default function TransaksiPage() {
           ))}
           {transaksi.length === 0 && (
             <tr>
-              <td colSpan={6} className="text-center py-4 text-gray-500">
+              <td colSpan={7} className="text-center py-4 text-gray-500">
                 Belum ada transaksi.
               </td>
             </tr>
