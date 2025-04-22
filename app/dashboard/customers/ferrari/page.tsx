@@ -26,34 +26,36 @@ export default function FerrariPage() {
     setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+ useEffect(() => {
+  setTimeout(() => {
+    setCarVisible(true);
+  }, 100);
 
-  useEffect(() => {
-    setTimeout(() => setCarVisible(true), 100);
-  }, []);
+  const handleClickOutside = (e: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      setMenuOpen(false);
+    }
+  };
 
-  useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const response = await fetch("/api/cars");
-        if (!response.ok) throw new Error("Gagal mengambil data mobil.");
-        const carData: Car[] = await response.json();
-        setCars(carData);
-      } catch (error) {
-        console.error("Error fetching cars:", error);
-      }
-    };
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
 
-    fetchCars();
-  }, []);
+useEffect(() => {
+  const fetchCars = async () => {
+    try {
+      const response = await fetch("/api/cars");
+      if (!response.ok) throw new Error("Gagal mengambil data mobil.");
+      const carData: Car[] = await response.json();
+      setCars(carData);
+    } catch (error) {
+      console.error("Error fetching cars:", error);
+    }
+  };
+
+  fetchCars();
+}, []);
+
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
@@ -63,12 +65,19 @@ export default function FerrariPage() {
   };
 
   return (
-    <main className="min-h-screen px-8 py-6 bg-gradient-to-b from-white to-teal-100">
-      <header className="flex justify-between items-center mb-8">
-        <nav className="relative flex gap-6 items-center">
-          <Link href="/dashboard/about">About Us</Link>
-          <Link href="/dashboard/cart">Cart</Link>
-          <Link href="#">Help</Link>
+  <main className="min-h-screen flex flex-col bg-gradient-to-b from-white to-teal-100 px-6 md:px-12 py-4">
+    <header className="flex justify-between items-center mb-8">
+      <span className="text-lg font-semibold">X</span>
+    </header>
+    
+    <nav className="relative flex gap-6 items-center">
+      <Link href="/dashboard/about">About Us</Link>
+      <Link href="/dashboard/cart">Cart</Link>
+      <Link href="#">Help</Link>
+    </nav>
+  </main>
+);
+
 
           {!isLoggedIn ? (
             <Link href="/login">
@@ -94,7 +103,8 @@ export default function FerrariPage() {
         </nav>
       </header>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+      {/* Ferrari Section */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center flex-grow px-6 md:px-12">
         <div>
           <h1 className="text-5xl font-bold mb-4">Ferrari</h1>
           <p className="mb-4 text-sm text-gray-800">
@@ -105,24 +115,93 @@ export default function FerrariPage() {
           </button>
         </div>
 
-        <div className={`transition-all duration-700 ease-out transform ${carVisible ? "translate-x-0 opacity-100" : "translate-x-32 opacity-0"}`}>
-          <Image src="/ferrari.png" alt="Ferrari Car" width={800} height={400} />
-        </div>
-      </section>
+<section>
+  <div className={`transition-all duration-700 ease-out transform ${carVisible ? "translate-x-0 opacity-100" : "translate-x-32 opacity-0"}`}>
+    <Image src="/ferrari.png" alt="Ferrari Car" width={800} height={400} className="mx-auto" />
+  </div>
+</section>
 
-      <section className="mt-12">
-        <h2 className="text-3xl font-bold mb-4">Daftar Mobil</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {cars.map((car) => (
-            <div key={car.id} className="border rounded-lg p-4 shadow-md">
-              <h3 className="text-xl font-semibold">{car.name}</h3>
-              <p className="text-sm text-gray-700">{car.description}</p>
-              <p className="font-bold text-lg">Harga: Rp {car.price.toLocaleString()}</p>
-              <Image src={car.imageUrl} alt={car.name} width={300} height={200} className="mt-2 rounded-lg" />
-            </div>
-          ))}
+{/* Logo List */}
+<section className="mt-12 px-6 md:px-12">
+  <div className="flex justify-start gap-6 mb-8">
+    {[
+      {
+        href: "/dashboard/customers/lamborghini",
+        src: "/images/logos/lamborghini.png",
+        alt: "Lamborghini Logo",
+        isActive: false
+      },
+      {
+        href: "/dashboard/customers/porsche",
+        src: "/images/logos/porsche.png",
+        alt: "Porsche Logo",
+        isActive: false
+      },
+      {
+        href: "/dashboard/customers/ferrari",
+        src: "/images/logos/ferrari.png",
+        alt: "Ferrari Logo",
+        isActive: true
+      }
+    ].map((logo) => (
+      <Link key={logo.alt} href={logo.href}>
+        <div className={`relative w-10 h-10 transition-all duration-300 ${!logo.isActive ? "grayscale hover:grayscale-0" : ""}`}>
+          <Image src={logo.src} alt={logo.alt} fill style={{ objectFit: "contain" }} />
         </div>
-      </section>
+      </Link>
+    ))}
+  </div>
+</section>
+
+{/* Dynamic Car List */}
+<section className="mt-12">
+  <h2 className="text-3xl font-bold mb-4">Daftar Mobil</h2>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {cars.map((car) => (
+      <div key={car.id} className="border rounded-lg p-4 shadow-md">
+        <h3 className="text-xl font-semibold">{car.name}</h3>
+        <p className="text-sm text-gray-700">{car.description}</p>
+        <p className="font-bold text-lg">Harga: Rp {car.price.toLocaleString()}</p>
+        <Image src={car.imageUrl} alt={car.name} width={300} height={200} className="mt-2 rounded-lg" />
+      </div>
+    ))}
+  </div>
+</section>
+
+
+      {/* Footer */}
+      <footer className="bg-black text-white py-6 mt-auto px-6 md:px-12">
+        <div className="container mx-auto flex flex-wrap justify-between">
+          <div>
+            <h3 className="text-lg font-semibold">Current Region / Language</h3>
+            <p>United States / English</p>
+            <button className="mt-2 px-4 py-2 border border-white rounded">Change</button>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Newsletter</h3>
+            <p>Latest news directly in your inbox.</p>
+            <button className="mt-2 px-4 py-2 border border-white rounded">Subscribe</button>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Locations & Contacts</h3>
+            <p>Do you have any questions?</p>
+            <button className="mt-2 px-4 py-2 border border-white rounded">Get in touch</button>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Social Media</h3>
+            <div className="flex gap-3 mt-2">
+              <span className="cursor-pointer">FB</span>
+              <span className="cursor-pointer">IG</span>
+              <span className="cursor-pointer">PN</span>
+              <span className="cursor-pointer">YT</span>
+              <span className="cursor-pointer">TW</span>
+            </div>
+          </div>
+        </div>
+        <div className="text-center mt-6">
+          © 2025 Toko Miring. All rights reserved.
+        </div>
+      </footer>
     </main>
   );
 }

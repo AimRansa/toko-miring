@@ -7,18 +7,21 @@ import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [role, setRole] = useState('user') // default 'user'
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleLogin = () => {
-    // Simpan status login dan role
-    localStorage.setItem('isLoggedIn', 'true')
-    localStorage.setItem('role', role)
-
-    // Redirect sesuai role
-    if (role === 'admin') {
+    // Cek kredensial untuk user dan admin
+    if (email === 'user' && password === 'user') {
+      localStorage.setItem('isLoggedIn', 'true')
+      localStorage.setItem('role', 'user')
+      router.push('/dashboard/customers/ferrari')
+    } else if (email === 'admin' && password === 'admin') {
+      localStorage.setItem('isLoggedIn', 'true')
+      localStorage.setItem('role', 'admin')
       router.push('/admin/dashboard')
     } else {
-      router.push('/dashboard/customers/ferrari')
+      alert('Invalid credentials. Please try again.')
     }
   }
 
@@ -43,6 +46,8 @@ export default function LoginPage() {
               <input
                 type="email"
                 placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-transparent border-b border-gray-300 text-white placeholder-gray-400 focus:outline-none focus:border-white"
               />
             </div>
@@ -55,20 +60,10 @@ export default function LoginPage() {
               <input
                 type="password"
                 placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-transparent border-b border-gray-300 text-white placeholder-gray-400 focus:outline-none focus:border-white"
               />
-            </div>
-
-            {/* Role */}
-            <div>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full bg-white text-black rounded px-2 py-1"
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
             </div>
 
             {/* Login Button */}

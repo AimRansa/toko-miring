@@ -41,8 +41,9 @@ export default function PorschePage() {
   };
 
   return (
-    <main className="min-h-screen px-8 py-6 bg-gradient-to-b from-white to-teal-100">
-      <header className="flex justify-between items-center mb-8">
+    <main className="min-h-screen flex flex-col bg-gradient-to-b from-white to-teal-100">
+      {/* Header */}
+      <header className="flex justify-between items-center px-6 md:px-12 py-4 mb-8">
         <span className="text-lg font-semibold"></span>
         <nav className="relative flex gap-6 items-center">
           <Link href="/dashboard/about">About Us</Link>
@@ -88,11 +89,12 @@ export default function PorschePage() {
         </nav>
       </header>
 
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+      {/* Porsche Section */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center flex-grow px-6 md:px-12">
         <div>
           <h1 className="text-5xl font-bold mb-4">Porsche</h1>
           <p className="mb-4 text-sm text-gray-800">
-            A Porsche is a blend of performance, luxury, and precision engineering. Known for its sleek design and powerful engines, it offers an unmatched driving experience with a focus on handling and speed.
+            Porsche combines heritage, innovation, and performance. Its sleek design and high-performance engineering offer a thrilling driving experience and timeless appeal for car enthusiasts.
           </p>
           <button
             onClick={() => router.push("/dashboard/customers/porsche/show")}
@@ -109,23 +111,44 @@ export default function PorschePage() {
             }`}
         >
           <Image
-            src="/porsche.png"
+            src="/images/cars/porsche.png"
             alt="Porsche Car"
             width={800}
             height={400}
+            className="mx-auto"
           />
         </div>
       </section>
 
-      <section className="mt-12">
-        <div className="flex justify-start gap-6">
+      {/* Logo List */}
+      <section className="mt-12 px-6 md:px-12">
+        <div className="flex justify-start gap-6 mb-8">
           {[
-            { href: "/dashboard/customers/lamborghini", src: "/images/logos/lamborghini.png", alt: "Lamborghini Logo", isActive: false },
-            { href: "/dashboard/customers/porsche", src: "/images/logos/porsche.png", alt: "Porsche Logo", isActive: true },
-            { href: "/dashboard/customers/ferrari", src: "/images/logos/ferrari.png", alt: "Ferrari Logo", isActive: false },
+            {
+              href: "/dashboard/customers/lamborghini",
+              src: "/images/logos/lamborghini.png",
+              alt: "Lamborghini Logo",
+              isActive: false,
+            },
+            {
+              href: "/dashboard/customers/porsche",
+              src: "/images/logos/porsche.png",
+              alt: "Porsche Logo",
+              isActive: true,
+            },
+            {
+              href: "/dashboard/customers/ferrari",
+              src: "/images/logos/ferrari.png",
+              alt: "Ferrari Logo",
+              isActive: false,
+            },
           ].map((logo) => (
             <Link key={logo.alt} href={logo.href}>
-              <div className={`relative w-10 h-10 transition-all duration-300 ${!logo.isActive ? "grayscale hover:grayscale-0" : ""}`}>
+              <div
+                className={`relative w-10 h-10 transition-all duration-300 ${
+                  !logo.isActive ? "grayscale hover:grayscale-0" : ""
+                }`}
+              >
                 <Image
                   src={logo.src}
                   alt={logo.alt}
@@ -137,6 +160,40 @@ export default function PorschePage() {
           ))}
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-black text-white py-6 mt-auto px-6 md:px-12">
+        <div className="container mx-auto flex flex-wrap justify-between">
+          <div>
+            <h3 className="text-lg font-semibold">Current Region / Language</h3>
+            <p>United States / English</p>
+            <button className="mt-2 px-4 py-2 border border-white rounded">Change</button>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Newsletter</h3>
+            <p>Latest news directly in your inbox.</p>
+            <button className="mt-2 px-4 py-2 border border-white rounded">Subscribe</button>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Locations & Contacts</h3>
+            <p>Do you have any questions?</p>
+            <button className="mt-2 px-4 py-2 border border-white rounded">Get in touch</button>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Social Media</h3>
+            <div className="flex gap-3 mt-2">
+              <span className="cursor-pointer">FB</span>
+              <span className="cursor-pointer">IG</span>
+              <span className="cursor-pointer">PN</span>
+              <span className="cursor-pointer">YT</span>
+              <span className="cursor-pointer">TW</span>
+            </div>
+          </div>
+        </div>
+        <div className="text-center mt-6">
+          © 2025 Toko Miring. All rights reserved.
+        </div>
+      </footer>
     </main>
   );
 }
