@@ -1,5 +1,5 @@
 // app/admin/page.tsx
-import CatalogTable from './CatalogTable'
+import CatalogTable from './daftarProduk/page'
 
 export default function Page() {
   return (

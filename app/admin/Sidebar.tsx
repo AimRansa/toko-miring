@@ -19,18 +19,20 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Dashboard", href: "/admin/dashboard", icon: <LayoutDashboard size={20} /> },
-  { label: "DataKategori", href: "/admin/datakategori", icon: <Tags size={20} /> },
-  { label: "Katalog", href: "/admin", icon: <Boxes size={20} /> },
-  { label: "Data Order", href: "/admin/order", icon: <ShoppingCart size={20} /> },
+  { label: "Formulir Produk", href: "/admin/formulirProduk", icon: <Tags size={20} /> },
+  { label: "Daftar Produk", href: "/admin/daftarProduk", icon: <Boxes size={20} /> },
+  { label: "Transaksi", href: "/admin/transaksi", icon: <ShoppingCart size={20} /> },
+  { label: "Formulir Transaksi", href: "/admin/formulirTransaksi", icon: <ShoppingCart size={20} /> }, // Tambahan baru
 ];
+
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn"); // hapus status login
-    router.push("/"); // redirect ke halaman utama
+    localStorage.removeItem("isLoggedIn");
+    router.push("/");
   };
 
   return (

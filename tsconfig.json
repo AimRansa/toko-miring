@@ -8,29 +8,31 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "plugins": [{ "name": "next" }],
     "baseUrl": ".",
     "paths": {
       "@/*": ["app/*"],
-      "@components/*": ["app/components/*"]
-    }
+      "@components/*": ["app/components/*"],
+      "@lib/*": ["app/lib/*"],
+      "@prisma/*": ["prisma/*"],
+      "@api/*": ["app/api/*"],
+      "@seed/*": ["app/seed/*"]
+    },
+    "types": ["node"]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/lib/placeholder-data.ts",
-    "scripts/seed.js"
+    "prisma/seed.ts",
+    "app/seed/**/*",
+    "app/api/**/*"
   ],
   "exclude": ["node_modules"]
 }

@@ -5,31 +5,33 @@ import { BackButton } from "./BackButton";
 
 export function TestimonialSection() {
   return (
-    <>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Manrope:wght@400;800&family=Inter:wght@400&display=swap"
-        rel="stylesheet"
-      />
-      <main className="relative w-full min-h-[728px]">
-        <header className="flex gap-2.5 justify-center items-center pt-9">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/7af6bb69139ca00aa79af687aa381b50905e4697"
-            className="h-[105px] rotate-[0.268deg] rounded-[90px] w-[105px]"
-            alt="Toko Miring Logo"
-          />
-          <h1 className="text-5xl font-bold text-transparent bg-clip-text rotate-[0.268deg] max-sm:text-4xl">
-            TESTIMONI
-          </h1>
-        </header>
-        <section className="mx-auto mt-14 mb-0 h-[495px] rounded-[89px] w-[1250px] max-md:h-auto max-md:w-[90%]">
-          <div className="grid relative gap-8 p-10 grid-cols-[repeat(5,171px)] max-md:gap-5 max-md:p-5 max-md:grid-cols-[repeat(2,1fr)] max-sm:gap-4 max-sm:p-4 max-sm:grid-cols-[1fr]">
-            {[...Array(5)].map((_, index) => (
-              <TestimonialCard key={index} />
-            ))}
-          </div>
-        </section>
+    <main className="relative w-full min-h-screen bg-gradient-to-b from-cyan-50 to-white">
+      {/* Header Logo & Judul */}
+      <header className="flex flex-col items-center justify-center pt-10">
+        <img
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/7af6bb69139ca00aa79af687aa381b50905e4697"
+          className="h-[105px] w-[105px] rounded-full"
+          alt="Logo Toko Miring"
+          aria-label="Logo Toko Miring"
+        />
+        <h1 className="mt-2 text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-cyan-800 tracking-wide max-sm:text-4xl">
+          TESTIMONI
+        </h1>
+      </header>
+
+      {/* Testimonial Grid */}
+      <section className="mx-auto mt-14 w-[90%] max-w-[1250px]">
+        <div className="grid gap-8 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {[...Array(5)].map((_, index) => (
+            <TestimonialCard key={index} />
+          ))}
+        </div>
+      </section>
+
+      {/* Tombol Kembali */}
+      <div className="absolute bottom-5 left-5">
         <BackButton />
-      </main>
-    </>
+      </div>
+    </main>
   );
 }
