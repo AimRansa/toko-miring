@@ -1,12 +1,12 @@
 import { PrismaClient } from "@prisma/client";
-import { cars } from "../app/seed/cars"; // Hapus .ts dari import
-import { transactions } from "../app/seed/transactions"; // Hapus .ts dari import
+import { cars } from "../app/seed/cars";
+import { transactions } from "../app/seed/transactions";
 
 const prisma = new PrismaClient();
 
 async function main() {
   try {
-    console.log("Memulai seeding data...");
+    console.log("🚀 Memulai seeding data...");
 
     // Insert data mobil
     await prisma.car.createMany({ data: cars });
