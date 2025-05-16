@@ -22,9 +22,8 @@ const navItems: NavItem[] = [
   { label: "Formulir Produk", href: "/admin/formulirProduk", icon: <Tags size={20} /> },
   { label: "Daftar Produk", href: "/admin/daftarProduk", icon: <Boxes size={20} /> },
   { label: "Transaksi", href: "/admin/transaksi", icon: <ShoppingCart size={20} /> },
-  { label: "Formulir Transaksi", href: "/admin/formulirTransaksi", icon: <ShoppingCart size={20} /> }, // Tambahan baru
+  { label: "Formulir Transaksi", href: "/admin/formulirTransaksi", icon: <ShoppingCart size={20} /> },
 ];
-
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
@@ -36,11 +35,13 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <nav className="flex flex-col justify-between h-screen p-6 bg-slate-900 w-[263px] max-md:w-[200px] max-sm:p-4 max-sm:w-full">
+    <nav className="flex flex-col justify-between h-full min-h-screen p-6 bg-slate-900 w-[263px] max-md:w-[200px] max-sm:w-full max-sm:p-4 overflow-y-auto">
+
+      {/* Top section: Logo and nav */}
       <div>
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/5a80eeaad196ee1ff43a447581d3864812447c69"
-          alt=""
+          alt="Logo"
           className="mb-5 h-[53px] rounded-[90px] w-[53px]"
         />
         <h1 className="mb-10 text-xl font-bold text-zinc-300">Toko Miring</h1>
@@ -64,13 +65,16 @@ export const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      <button
-        onClick={handleLogout}
-        className="flex items-center gap-2 text-xl text-red-600 mt-10 hover:text-red-400 transition"
-      >
-        <LogOut size={20} />
-        Log Out
-      </button>
+      {/* Bottom section: Logout */}
+      <div className="mt-10">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 text-xl text-red-600 hover:text-red-400 transition"
+        >
+          <LogOut size={20} />
+          Log Out
+        </button>
+      </div>
     </nav>
   );
 };

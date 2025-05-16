@@ -1,73 +1,91 @@
 'use client'
 
-import { useTransaksiContext } from '../context/TransaksiContext'
 import { useEffect, useState } from 'react'
 
+type Transaksi = {
+  id_transaksi: number
+  customer: {
+    nama_customer: string
+  }
+  product: {
+    id_produk: number
+    nama_produk: string
+  }
+  tanggal: string
+  total_harga: number
+}
+
 export default function TransaksiPage() {
-  const { transaksi, setTransaksi } = useTransaksiContext()
-  const [editId, setEditId] = useState<string | null>(null)
+  const [transaksi, setTransaksi] = useState<Transaksi[]>([])
+  const [loading, setLoading] = useState(true)
+  const [editId, setEditId] = useState<number | null>(null)
   const [editForm, setEditForm] = useState({
-    pelanggan: '',
-    produk: '',
+    nama_customer: '',
+    nama_produk: '',
+    id_produk: '',
     tanggal: '',
-    total: '',
-    status: '',
+    total_harga: '',
   })
 
+  // Ambil data transaksi dari API
   useEffect(() => {
-    if (transaksi.length === 0) {
-      setTransaksi([
-        {
-          id: '001',
-          pelanggan: 'Andi Wijaya',
-          produk: 'Ferari',
-          tanggal: '2025-04-20',
-          total: '150000',
-          status: 'Sukses',
-        },
-        {
-          id: '002',
-          pelanggan: 'Siti Lestari',
-          produk: 'Lamborgini',
-          tanggal: '2025-04-21',
-          total: '200000',
-          status: 'Pending',
-        },
-        {
-          id: '003',
-          pelanggan: 'Budi Santoso',
-          produk: 'Porsche',
-          tanggal: '2025-04-22',
-          total: '175000',
-          status: 'Gagal',
-        },
-      ])
+    const fetchData = async () => {
+      const res = await fetch('/api/transaksi')
+      const data = await res.json()
+      setTransaksi(data)
+      setLoading(false)
     }
-  }, [setTransaksi, transaksi])
+    fetchData()
+  }, [])
 
-  const handleEdit = (item: any) => {
-    setEditId(item.id)
+  const handleEdit = (item: Transaksi) => {
+    setEditId(item.id_transaksi)
     setEditForm({
-      pelanggan: item.pelanggan,
-      produk: item.produk,
-      tanggal: item.tanggal,
-      total: item.total,
-      status: item.status,
+      nama_customer: item.customer.nama_customer,
+      nama_produk: item.product.nama_produk,
+      id_produk: item.product.id_produk.toString(),
+      tanggal: item.tanggal.slice(0, 10),
+      total_harga: item.total_harga.toString(),
     })
   }
 
-  const handleSave = (id: string) => {
-    setTransaksi((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, ...editForm } : item
+  const handleSave = async (id: number) => {
+    const res = await fetch(`/api/transaksi/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tanggal: editForm.tanggal,
+        total_harga: parseInt(editForm.total_harga),
+        id_produk: parseInt(editForm.id_produk),
+      }),
+    })
+
+    if (res.ok) {
+      const updated = await res.json()
+      setTransaksi((prev) =>
+        prev.map((item) =>
+          item.id_transaksi === id
+            ? {
+                ...item,
+                tanggal: updated.tanggal,
+                total_harga: updated.total_harga,
+                product: {
+                  ...item.product,
+                  id_produk: updated.id_produk,
+                }
+              }
+            : item
+        )
       )
-    )
-    setEditId(null)
+      setEditId(null)
+    }
   }
 
-  const handleDelete = (id: string) => {
-    if (confirm('Yakin ingin menghapus transaksi ini?')) {
-      setTransaksi((prev) => prev.filter((item) => item.id !== id))
+  const handleDelete = async (id: number) => {
+    if (!confirm('Yakin ingin menghapus transaksi ini?')) return
+    const res = await fetch(`/api/transaksi/${id}`, { method: 'DELETE' })
+    if (res.ok) {
+      setTransaksi((prev) => prev.filter((item) => item.id_transaksi !== id))
     }
   }
 
@@ -83,137 +101,112 @@ export default function TransaksiPage() {
         </button>
       </div>
 
-      <table className="w-full table-auto border border-gray-300 text-sm">
-        <thead className="bg-slate-800 text-white">
-          <tr>
-            <th className="px-4 py-2 text-left">ID Transaksi</th>
-            <th className="px-4 py-2 text-left">Pelanggan</th>
-            <th className="px-4 py-2 text-left">Nama Produk</th>
-            <th className="px-4 py-2 text-left">Tanggal</th>
-            <th className="px-4 py-2 text-left">Total</th>
-            <th className="px-4 py-2 text-left">Status</th>
-            <th className="px-4 py-2 text-left">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transaksi.map((item) => (
-            <tr key={item.id} className="border-t border-gray-300">
-              <td className="px-4 py-2">{item.id}</td>
-              <td className="px-4 py-2">
-                {editId === item.id ? (
-                  <input
-                    type="text"
-                    className="border rounded px-2 py-1 w-full"
-                    value={editForm.pelanggan}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, pelanggan: e.target.value })
-                    }
-                  />
-                ) : (
-                  item.pelanggan
-                )}
-              </td>
-              <td className="px-4 py-2">
-                {editId === item.id ? (
-                  <input
-                    type="text"
-                    className="border rounded px-2 py-1 w-full"
-                    value={editForm.produk}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, produk: e.target.value })
-                    }
-                  />
-                ) : (
-                  item.produk
-                )}
-              </td>
-              <td className="px-4 py-2">
-                {editId === item.id ? (
-                  <input
-                    type="date"
-                    className="border rounded px-2 py-1 w-full"
-                    value={editForm.tanggal}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, tanggal: e.target.value })
-                    }
-                  />
-                ) : (
-                  item.tanggal
-                )}
-              </td>
-              <td className="px-4 py-2">
-                {editId === item.id ? (
-                  <input
-                    type="text"
-                    className="border rounded px-2 py-1 w-full"
-                    value={editForm.total}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, total: e.target.value })
-                    }
-                  />
-                ) : (
-                  item.total
-                )}
-              </td>
-              <td className="px-4 py-2">
-                {editId === item.id ? (
-                  <select
-                    className="border rounded px-2 py-1 w-full"
-                    value={editForm.status}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, status: e.target.value })
-                    }
-                  >
-                    <option value="Sukses">Sukses</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Gagal">Gagal</option>
-                  </select>
-                ) : (
-                  item.status
-                )}
-              </td>
-              <td className="px-4 py-2 space-x-2">
-                {editId === item.id ? (
-                  <>
-                    <button
-                      onClick={() => handleSave(item.id)}
-                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs"
-                    >
-                      Simpan
-                    </button>
-                    <button
-                      onClick={() => setEditId(null)}
-                      className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded text-xs"
-                    >
-                      Batal
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => handleEdit(item)}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-xs"
-                  >
-                    Edit
-                  </button>
-                )}
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
-                >
-                  Hapus
-                </button>
-              </td>
-            </tr>
-          ))}
-          {transaksi.length === 0 && (
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <table className="w-full table-auto border border-gray-300 text-sm">
+          <thead className="bg-slate-800 text-white">
             <tr>
-              <td colSpan={7} className="text-center py-4 text-gray-500">
-                Belum ada transaksi.
-              </td>
+              <th className="px-4 py-2 text-left">ID Transaksi</th>
+              <th className="px-4 py-2 text-left">Pelanggan</th>
+              <th className="px-4 py-2 text-left">ID Produk</th>
+              <th className="px-4 py-2 text-left">Produk</th>
+              <th className="px-4 py-2 text-left">Tanggal</th>
+              <th className="px-4 py-2 text-left">Total</th>
+              <th className="px-4 py-2 text-left">Aksi</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {transaksi.map((item) => (
+              <tr key={item.id_transaksi} className="border-t border-gray-300">
+                <td className="px-4 py-2">{item.id_transaksi}</td>
+                <td className="px-4 py-2">{item.customer.nama_customer}</td>
+                <td className="px-4 py-2">
+                  {editId === item.id_transaksi ? (
+                    <input
+                      type="number"
+                      className="border rounded px-2 py-1 w-full"
+                      value={editForm.id_produk}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, id_produk: e.target.value })
+                      }
+                    />
+                  ) : (
+                    item.product.id_produk
+                  )}
+                </td>
+                <td className="px-4 py-2">{item.product.nama_produk}</td>
+                <td className="px-4 py-2">
+                  {editId === item.id_transaksi ? (
+                    <input
+                      type="date"
+                      className="border rounded px-2 py-1 w-full"
+                      value={editForm.tanggal}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, tanggal: e.target.value })
+                      }
+                    />
+                  ) : (
+                    item.tanggal.slice(0, 10)
+                  )}
+                </td>
+                <td className="px-4 py-2">
+                  {editId === item.id_transaksi ? (
+                    <input
+                      type="number"
+                      className="border rounded px-2 py-1 w-full"
+                      value={editForm.total_harga}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, total_harga: e.target.value })
+                      }
+                    />
+                  ) : (
+                    `Rp${item.total_harga.toLocaleString()}`
+                  )}
+                </td>
+                <td className="px-4 py-2 space-x-2">
+                  {editId === item.id_transaksi ? (
+                    <>
+                      <button
+                        onClick={() => handleSave(item.id_transaksi)}
+                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs"
+                      >
+                        Simpan
+                      </button>
+                      <button
+                        onClick={() => setEditId(null)}
+                        className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded text-xs"
+                      >
+                        Batal
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => handleEdit(item)}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-xs"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDelete(item.id_transaksi)}
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
+                  >
+                    Hapus
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {transaksi.length === 0 && (
+              <tr>
+                <td colSpan={7} className="text-center py-4 text-gray-500">
+                  Belum ada transaksi.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }
