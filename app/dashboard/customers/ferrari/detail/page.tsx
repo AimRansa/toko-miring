@@ -72,7 +72,7 @@ export default function FerrariDetail() {
             {loading ? "Loading..." : product?.nama_produk || "Not Found"}
           </h1>
           <p className="text-2xl text-red-600 mb-8">
-            {loading ? "" : product ? `$${product.harga.toLocaleString()}` : ""}
+            {loading ? "" : product ? `Rp ${product.harga.toLocaleString()}` : ""}
           </p>
 
           {/* Static Section */}

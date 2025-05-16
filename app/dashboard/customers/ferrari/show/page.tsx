@@ -55,7 +55,7 @@ export default function FerrariPage() {
               />
             </div>
             <p className="mt-4 font-semibold">{car.nama_produk}</p>
-            <p className="text-sm text-gray-600">From ${car.harga.toLocaleString()}</p>
+            <p className="text-sm text-gray-600">From Rp {car.harga.toLocaleString()}</p>
           </div>
         ))}
       </div>
