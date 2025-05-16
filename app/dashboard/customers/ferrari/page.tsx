@@ -126,7 +126,7 @@ export default function FerrariPage() {
         </div>
 
         <div className={`transition-all duration-700 ease-out transform ${carVisible ? "translate-x-0 opacity-100" : "translate-x-32 opacity-0"}`}>
-          <Image src="/ferrari.png" alt="Ferrari Car" width={800} height={400} className="mx-auto" />
+          <Image src="/images/cars/ferrari.png" alt="Ferrari Car" width={800} height={400} className="mx-auto" />
         </div>
       </section>
 

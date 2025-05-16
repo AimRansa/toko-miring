@@ -67,7 +67,7 @@ export default function FerrariPage() {
 
         <div className="flex justify-center md:justify-end">
           <Image
-            src="/ferrari.png"
+            src="/images/cars/ferrari.png"
             alt="Ferrari Car"
             width={1000}
             height={500}
