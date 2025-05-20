@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import ProductTableSkeleton from '../components/ProductTableSkeleton'
 
 export default function DaftarProdukPage() {
   const [products, setProducts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const [editId, setEditId] = useState<number | null>(null)
   const [editForm, setEditForm] = useState({
     nama: '',
@@ -12,17 +14,22 @@ export default function DaftarProdukPage() {
     harga: '',
     status: ''
   })
+
   const router = useRouter()
 
   useEffect(() => {
-    fetchProducts()
-  }, [])
+    const fetchData = async () => {
+      const res = await fetch('/api/products')
+      const data = await res.json()
 
-  const fetchProducts = async () => {
-    const res = await fetch('/api/products')
-    const data = await res.json()
-    setProducts(data)
-  }
+      setTimeout(() => {
+        setProducts(data)
+        setLoading(false)
+      }, 1000) // delay 1 detik
+    }
+
+    fetchData()
+  }, [])
 
   const handleEdit = (product: any) => {
     setEditId(product.id_produk)
@@ -49,11 +56,21 @@ export default function DaftarProdukPage() {
     fetchProducts()
   }
 
+  const fetchProducts = async () => {
+    const res = await fetch('/api/products')
+    const data = await res.json()
+    setProducts(data)
+  }
+
   const handleDeleteProduct = async (id: number) => {
     await fetch(`/api/products/${id}`, {
       method: 'DELETE'
     })
     fetchProducts()
+  }
+
+  if (loading) {
+    return <ProductTableSkeleton />
   }
 
   return (

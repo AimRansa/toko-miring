@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import SkeletonTransaksi from '../components/SkeletonTransaksi'
 
 type Transaksi = {
   id_transaksi: number
@@ -27,9 +28,11 @@ export default function TransaksiPage() {
     total_harga: '',
   })
 
-  // Ambil data transaksi dari API
   useEffect(() => {
     const fetchData = async () => {
+      // Simulasi delay 2 detik
+      await new Promise(resolve => setTimeout(resolve, 2000))
+
       const res = await fetch('/api/transaksi')
       const data = await res.json()
       setTransaksi(data)
@@ -102,7 +105,7 @@ export default function TransaksiPage() {
       </div>
 
       {loading ? (
-        <p>Loading...</p>
+        <SkeletonTransaksi />
       ) : (
         <table className="w-full table-auto border border-gray-300 text-sm">
           <thead className="bg-slate-800 text-white">
