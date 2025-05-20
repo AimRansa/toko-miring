@@ -36,7 +36,7 @@ export default function ClientTable({ products }: { products: any[] }) {
       })
     })
     setEditId(null)
-    router.refresh() // untuk re-fetch data
+    router.refresh()
   }
 
   const handleDelete = async (id: number) => {
@@ -46,12 +46,17 @@ export default function ClientTable({ products }: { products: any[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <button
-        onClick={() => router.push('/admin/formulirProduk')}
-        className="bg-blue-600 text-white px-4 py-2 mb-4 rounded hover:bg-blue-700 text-sm"
-      >
-        + Tambah Produk
-      </button>
+      {/* ✅ Header dan tombol sejajar */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">Daftar Produk</h2>
+        <button
+          onClick={() => router.push('/admin/formulirProduk')}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
+        >
+          + Tambah Produk
+        </button>
+      </div>
+
       <table className="min-w-full text-sm border border-gray-300">
         <thead className="bg-slate-800 text-white">
           <tr>

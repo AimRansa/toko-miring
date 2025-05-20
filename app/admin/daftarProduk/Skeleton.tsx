@@ -3,9 +3,6 @@ export default function Skeleton() {
 
   return (
     <div className="overflow-x-auto animate-pulse">
-      <button className="bg-blue-300 text-white px-4 py-2 mb-4 rounded w-40 h-8" disabled>
-        Loading...
-      </button>
       <table className="min-w-full text-sm border border-gray-300">
         <thead className="bg-slate-800 text-white">
           <tr>
