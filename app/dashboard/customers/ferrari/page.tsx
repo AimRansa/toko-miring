@@ -64,9 +64,10 @@ export default function FerrariPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col bg-gradient-to-b from-white to-teal-100">
+    <main className=" flex flex-col bg-gradient-to-b from-white to-teal-100">
       {/* Header */}
-      <header className="flex justify-between items-center px-6 md:px-12 py-4 mb-8">
+     <div className="min-h-screen flex flex-col">
+       <header className="flex justify-between items-center px-6 md:px-12 py-4 mb-8">
         <span className="text-lg font-semibold"></span>
         <nav className="relative flex gap-6 items-center">
           <Link href="/dashboard/about">About Us</Link>
@@ -139,8 +140,8 @@ export default function FerrariPage() {
             { href: "/dashboard/customers/ferrari", src: "/images/logos/ferrari.png", alt: "Ferrari Logo", isActive: true },
           ].map((logo) => (
             <Link key={logo.alt} href={logo.href}>
-              <div className={`relative w-10 h-10 transition-all duration-300 ${!logo.isActive ? "grayscale hover:grayscale-0" : ""}`}>
-                <Image src={logo.src} alt={logo.alt} fill style={{ objectFit: "contain" }} />
+              <div className={`relative w-20 h-20 transition-all duration-300 ${!logo.isActive ? "grayscale hover:grayscale-0" : ""}`}>
+                <Image src={logo.src} alt={logo.alt} fill style={{ objectFit: "cover" }} className="p-2 m-2 flex items-center" />
               </div>
             </Link>
           ))}
@@ -160,6 +161,7 @@ export default function FerrariPage() {
           ))}
         </div>
       </section>
+     </div>
 
       {/* Footer */}
       <footer className="bg-black text-white py-6 mt-auto px-6 md:px-12">
