@@ -2,64 +2,66 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useProductContext } from '../context/ProductContext'
 
 export default function FormulirProdukPage() {
-  const { products, addProduct } = useProductContext()
   const router = useRouter()
-
   const [loading, setLoading] = useState(true)
   const [formData, setFormData] = useState({
     nama: '',
     stok: '',
-    status: 'Tersedia'
+    harga: '',
+    status: 'Tersedia',
   })
 
   useEffect(() => {
     const delayLoad = async () => {
-      await new Promise((res) => setTimeout(res, 1000)) // ⏱ Delay 1 detik
+      await new Promise((res) => setTimeout(res, 1000))
       setLoading(false)
     }
     delayLoad()
   }, [])
 
-  const getNextId = () => {
-    if (products.length === 0) return '001'
-    const maxId = Math.max(...products.map(p => parseInt(p.id)))
-    return (maxId + 1).toString().padStart(3, '0')
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const newProduct = {
-      id: getNextId(),
-      ...formData,
-      stok: parseInt(formData.stok)
-    }
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      const response = await fetch(`${baseUrl}/api/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nama: formData.nama,
+          stok: parseInt(formData.stok),
+          harga: parseInt(formData.harga),
+          status: formData.status,
+        }),
+      })
 
-    addProduct(newProduct)
-    alert(`Produk ${formData.nama} berhasil disimpan!`)
-    router.push('/admin/daftarProduk')
+      if (!response.ok) {
+        throw new Error(`Gagal menyimpan produk: ${response.status}`)
+      }
+
+      alert(`Produk ${formData.nama} berhasil disimpan!`)
+      router.push('/admin/daftarProduk')
+    } catch (error) {
+      console.error('ERROR:', error)
+      alert('Gagal menyimpan produk. Silakan coba lagi.')
+    }
   }
 
   if (loading) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md animate-pulse">
         <div className="h-6 bg-gray-300 rounded w-1/3 mb-6"></div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-            </div>
-            <div className="space-y-2">
-              <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-            </div>
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="space-y-2">
+                <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                <div className="h-10 bg-gray-200 rounded"></div>
+              </div>
+            ))}
           </div>
-
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="h-4 bg-gray-300 rounded w-1/2"></div>
@@ -67,7 +69,6 @@ export default function FormulirProdukPage() {
             </div>
           </div>
         </div>
-
         <div className="flex justify-end space-x-3 pt-6">
           <div className="w-24 h-10 bg-gray-200 rounded"></div>
           <div className="w-32 h-10 bg-gray-300 rounded"></div>
@@ -96,7 +97,6 @@ export default function FormulirProdukPage() {
                 required
               />
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Stok Produk
@@ -107,6 +107,19 @@ export default function FormulirProdukPage() {
                 onChange={(e) => setFormData({ ...formData, stok: e.target.value })}
                 className="w-full p-2 border rounded-md"
                 placeholder="Contoh: 50"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Harga Produk
+              </label>
+              <input
+                type="number"
+                value={formData.harga}
+                onChange={(e) => setFormData({ ...formData, harga: e.target.value })}
+                className="w-full p-2 border rounded-md"
+                placeholder="Contoh: 1000000"
                 required
               />
             </div>
