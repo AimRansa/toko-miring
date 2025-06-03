@@ -111,7 +111,7 @@ export default function LamborghiniPage() {
             }`}
         >
           <Image
-            src="/lamborghini.png"
+            src="/images/cars/lamborghini.png"
             alt="Lamborghini Car"
             width={800}
             height={400}

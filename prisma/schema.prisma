@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,19 +7,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Car {
-  id          Int     @id @default(autoincrement())
-  name        String
-  brand       String
-  price       Int
-  description String
-  imageUrl    String
+model Customer {
+  id_customer  Int          @id @default(autoincrement())
+  nama_customer String
+  email         String      @unique
+  alamat        String?
+  transactions  Transaction[]
+}
+
+model Product {
+  id_produk    Int          @id @default(autoincrement())
+  nama_produk  String
+  harga        Int
+  stok         Int
+  foto         String?
+  deskripsi    String?
+  status       String       @default("Tersedia")
+  transactions Transaction[]
 }
 
 model Transaction {
-  id           Int     @id @default(autoincrement())
-  customerName String
-  carName      String
-  date         DateTime
-  amount       Int
+  id_transaksi Int      @id @default(autoincrement())
+  id_produk    Int
+  id_customer  Int
+  tanggal      DateTime @default(now())
+  total_harga  Int
+
+  customer     Customer @relation(fields: [id_customer], references: [id_customer], onDelete: Cascade)
+  product      Product  @relation(fields: [id_produk], references: [id_produk], onDelete: Cascade)
 }
