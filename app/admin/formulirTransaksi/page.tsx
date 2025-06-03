@@ -1,33 +1,69 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function FormulirTransaksiPage() {
   const router = useRouter()
-  
+
   const [formData, setFormData] = useState({
-    pelanggan: '',
-    tanggal: new Date().toISOString().split('T')[0], // Default hari ini
-    total: '',
-    status: 'Pending'
+    nama_customer: '',
+    id_produk: '',
+    tanggal: new Date().toISOString().split('T')[0],
+    total_harga: '',
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [products, setProducts] = useState<any[]>([])
+
+  // Ambil data produk
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const res = await fetch('/api/products')
+      const data = await res.json()
+      setProducts(data)
+    }
+    fetchProducts()
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Generate ID transaksi (contoh: TRX003)
-    const newId = `TRX${Math.floor(100 + Math.random() * 900)}`
-    
-    // Simulasi penyimpanan data (biasanya akan mengirim ke API/database)
-    console.log('Transaksi baru:', {
-      id: newId,
-      ...formData,
-      total: formatToCurrency(formData.total) // Format ke Rp
-    })
-    
-    alert(`Transaksi ${newId} berhasil dibuat!`)
-    router.push('/admin/daftarTransaksi')
+
+    try {
+      // 1. Tambahkan Customer Baru
+      const customerRes = await fetch('/api/customers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nama_customer: formData.nama_customer,
+          email: `${formData.nama_customer.replace(/\s/g, '').toLowerCase()}@example.com`,
+          alamat: '',
+        }),
+      })
+
+      const customer = await customerRes.json()
+
+      // 2. Simpan Transaksi
+      const transaksiRes = await fetch('/api/transaksi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id_customer: customer.id_customer,
+          id_produk: Number(formData.id_produk),
+          total_harga: Number(formData.total_harga),
+        }),
+      })
+
+      if (transaksiRes.ok) {
+        const result = await transaksiRes.json()
+        alert(`Transaksi TRX${result.id_transaksi} berhasil disimpan!`)
+        router.push('/admin/transaksi')
+      } else {
+        alert('Gagal menyimpan transaksi.')
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Terjadi kesalahan saat mengirim data.')
+    }
   }
 
   const formatToCurrency = (value: string) => {
@@ -38,7 +74,7 @@ export default function FormulirTransaksiPage() {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h1 className="text-xl font-bold mb-6">Formulir Transaksi Baru</h1>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Kolom Kiri */}
@@ -49,14 +85,14 @@ export default function FormulirTransaksiPage() {
               </label>
               <input
                 type="text"
-                value={formData.pelanggan}
-                onChange={(e) => setFormData({...formData, pelanggan: e.target.value})}
+                value={formData.nama_customer}
+                onChange={(e) => setFormData({ ...formData, nama_customer: e.target.value })}
                 className="w-full p-2 border rounded-md"
                 placeholder="Contoh: Budi Santoso"
                 required
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Tanggal Transaksi
@@ -64,15 +100,34 @@ export default function FormulirTransaksiPage() {
               <input
                 type="date"
                 value={formData.tanggal}
-                onChange={(e) => setFormData({...formData, tanggal: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, tanggal: e.target.value })}
                 className="w-full p-2 border rounded-md"
                 required
               />
             </div>
           </div>
-          
+
           {/* Kolom Kanan */}
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Produk Saya
+              </label>
+              <select
+                value={formData.id_produk}
+                onChange={(e) => setFormData({ ...formData, id_produk: e.target.value })}
+                className="w-full p-2 border rounded-md"
+                required
+              >
+                <option value="">Pilih Produk</option>
+                {products.map((prod) => (
+                  <option key={prod.id_produk} value={prod.id_produk}>
+                    {prod.nama_produk}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Total Transaksi
@@ -83,10 +138,10 @@ export default function FormulirTransaksiPage() {
                 </span>
                 <input
                   type="text"
-                  value={formData.total}
+                  value={formData.total_harga}
                   onChange={(e) => {
                     const value = e.target.value.replace(/\D/g, '')
-                    setFormData({...formData, total: value})
+                    setFormData({ ...formData, total_harga: value })
                   }}
                   className="w-full p-2 pl-10 border rounded-md"
                   placeholder="Contoh: 2000000"
@@ -94,32 +149,16 @@ export default function FormulirTransaksiPage() {
                 />
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Tampilan: {formData.total ? formatToCurrency(formData.total) : 'Rp 0'}
+                Tampilan: {formData.total_harga ? formatToCurrency(formData.total_harga) : 'Rp 0'}
               </p>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Status Transaksi
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) => setFormData({...formData, status: e.target.value})}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="Pending">Pending</option>
-                <option value="Sukses">Sukses</option>
-                <option value="Gagal">Gagal</option>
-                <option value="Dibatalkan">Dibatalkan</option>
-              </select>
             </div>
           </div>
         </div>
-        
+
         <div className="flex justify-end space-x-3 pt-4">
           <button
             type="button"
-            onClick={() => router.push('/admin/daftarTransaksi')}
+            onClick={() => router.push('/admin/transaksi')}
             className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100"
           >
             Batal
