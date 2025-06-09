@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 type Transaksi = {
   id_transaksi: number
@@ -14,6 +14,8 @@ export default function Table() {
   const [search, setSearch] = useState('')
   const [transaksi, setTransaksi] = useState<Transaksi[]>([])
   const [loading, setLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -27,6 +29,7 @@ export default function Table() {
           })
           const data = await res.json()
           setTransaksi(data)
+          setCurrentPage(1) // reset ke halaman 1 kalau data baru masuk
         } catch (error) {
           console.error('Gagal fetch data transaksi:', error)
         } finally {
@@ -39,6 +42,43 @@ export default function Table() {
 
     return () => clearTimeout(delayDebounce)
   }, [search])
+
+  // Hitung total halaman
+  const totalPages = Math.ceil(transaksi.length / itemsPerPage)
+
+  // Ambil transaksi untuk halaman sekarang
+  const currentTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return transaksi.slice(startIndex, startIndex + itemsPerPage)
+  }, [currentPage, transaksi])
+
+  // Render tombol halaman (maks 5 tombol)
+  const renderPageNumbers = () => {
+    const maxPageButtons = 5
+    let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2))
+    let endPage = startPage + maxPageButtons - 1
+
+    if (endPage > totalPages) {
+      endPage = totalPages
+      startPage = Math.max(1, endPage - maxPageButtons + 1)
+    }
+
+    const pageButtons = []
+    for (let i = startPage; i <= endPage; i++) {
+      pageButtons.push(
+        <button
+          key={i}
+          onClick={() => setCurrentPage(i)}
+          className={`px-3 py-1 rounded ${
+            i === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'
+          }`}
+        >
+          {i}
+        </button>
+      )
+    }
+    return pageButtons
+  }
 
   return (
     <>
@@ -63,9 +103,9 @@ export default function Table() {
         </thead>
         <tbody>
           {loading ? (
-            Array.from({ length: 3 }).map((_, i) => (
+            Array.from({ length: itemsPerPage }).map((_, i) => (
               <tr key={i} className="border-t border-gray-300">
-                {[ 'w-3/4', 'w-2/3', 'w-1/2', 'w-2/3', 'w-1/2', 'w-3/4' ].map((width, idx) => (
+                {['w-3/4', 'w-2/3', 'w-1/2', 'w-2/3', 'w-1/2', 'w-3/4'].map((width, idx) => (
                   <td key={idx} className="px-4 py-2">
                     <div className="shimmer-wrapper h-4 rounded w-full relative overflow-hidden bg-gray-200">
                       <div className="shimmer"></div>
@@ -74,14 +114,14 @@ export default function Table() {
                 ))}
               </tr>
             ))
-          ) : transaksi.length === 0 ? (
+          ) : currentTransactions.length === 0 ? (
             <tr>
               <td colSpan={6} className="text-center py-4 text-gray-500">
                 Belum ada transaksi.
               </td>
             </tr>
           ) : (
-            transaksi.map((item) => (
+            currentTransactions.map((item) => (
               <tr key={item.id_transaksi} className="border-t border-gray-300">
                 <td className="px-4 py-2">{item.id_transaksi}</td>
                 <td className="px-4 py-2">{item.customer.nama_customer}</td>
@@ -94,6 +134,33 @@ export default function Table() {
           )}
         </tbody>
       </table>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-4 space-x-2">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className={`px-3 py-1 rounded ${
+              currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'
+            }`}
+          >
+            Prev
+          </button>
+
+          {renderPageNumbers()}
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-1 rounded ${
+              currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       <style jsx>{`
         .shimmer-wrapper {
