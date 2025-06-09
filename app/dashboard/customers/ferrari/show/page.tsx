@@ -44,7 +44,7 @@ export default function FerrariPage() {
           <div
             key={car.id_produk}
             className="flex flex-col items-center text-center cursor-pointer hover:scale-105 transition"
-            onClick={() => handleCarClick(car.id_produk)} // ✅ Ubah disini
+            onClick={() => handleCarClick(car.id_produk)}
           >
             <div className="w-full h-48 relative">
               <Image

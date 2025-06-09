@@ -2,35 +2,65 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const lamborghiniCars = [
-  {
-    name: "Lamborghini Aventador",
-    price: "$498,000",
-    image: "/images/cars/lamborghini.png",
-  },
-  {
-    name: "Lamborghini Huracán",
-    price: "$261,000",
-    image: "/images/cars/lamborghini.png",
-  },
-  {
-    name: "Lamborghini Revuelto",
-    price: "$604,000",
-    image: "/images/cars/lamborghini.png",
-  },
-  {
-    name: "Lamborghini Urus",
-    price: "$230,000",
-    image: "/images/cars/lamborghini.png",
-  },
-];
+interface Product {
+  id_produk: number;
+  nama_produk: string;
+  harga: number;
+}
 
 export default function LamborghiniPage() {
+  const [cars, setCars] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/products/lamborghini");
+        if (!res.ok) {
+          throw new Error(`Failed to fetch cars. Status: ${res.status}`);
+        }
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid data format: expected an array");
+        }
+        setCars(data);
+      } catch (err: any) {
+        console.error("Error fetching cars:", err.message);
+        setError("Failed to load Lamborghini models. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCars();
+  }, []);
+
+  const handleCarClick = (id: number) => {
+    router.push(`/dashboard/customers/lamborghini/detail?id=${id}`);
+  };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen p-8 bg-gradient-to-b from-white to-teal-100 flex justify-center items-center">
+        <p>Loading Lamborghini models...</p>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="min-h-screen p-8 bg-gradient-to-b from-white to-teal-100 flex justify-center items-center">
+        <p className="text-red-600">{error}</p>
+      </main>
+    );
+  }
+
   return (
-    <main className="min-h-screen p-8 bg-white">
+    <main className="min-h-screen p-8 bg-gradient-to-b from-white to-teal-100">
       <button
         onClick={() => router.back()}
         className="mb-4 px-4 py-2 text-sm bg-black text-white rounded-full hover:bg-gray-800 transition"
@@ -41,18 +71,22 @@ export default function LamborghiniPage() {
       <h1 className="text-3xl font-bold mb-6">Lamborghini Models</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {lamborghiniCars.map((car) => (
-          <div key={car.name} className="flex flex-col items-center text-center">
+        {cars.map((car) => (
+          <div
+            key={car.id_produk}
+            className="flex flex-col items-center text-center cursor-pointer hover:scale-105 transition"
+            onClick={() => handleCarClick(car.id_produk)}
+          >
             <div className="w-full h-48 relative">
               <Image
-                src={car.image}
-                alt={car.name}
+                src="/images/cars/lamborghini.png"
+                alt={car.nama_produk}
                 fill
                 style={{ objectFit: "contain" }}
               />
             </div>
-            <p className="mt-4 font-semibold">{car.name}</p>
-            <p className="text-sm text-gray-600">From {car.price}</p>
+            <p className="mt-4 font-semibold">{car.nama_produk}</p>
+            <p className="text-sm text-gray-600">From Rp {car.harga.toLocaleString()}</p>
           </div>
         ))}
       </div>
@@ -70,7 +104,6 @@ export default function LamborghiniPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Sample Testimonials - Replace or expand as needed */}
           <div className="p-4 border rounded-xl shadow-sm bg-gray-50">
             <p className="text-gray-700 italic">"Driving the Aventador is a dream come true!"</p>
             <p className="mt-2 text-sm text-gray-500">– Esep.</p>
