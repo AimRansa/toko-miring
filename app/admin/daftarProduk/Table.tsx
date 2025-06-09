@@ -2,50 +2,40 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Pencil, Trash2, Save } from 'lucide-react'
 
 export default function Table() {
   const [products, setProducts] = useState<any[]>([])
   const [editId, setEditId] = useState<number | null>(null)
-  const [editForm, setEditForm] = useState({
-    nama: '',
-    stok: '',
-    harga: '',
-    status: ''
-  })
+  const [editForm, setEditForm] = useState({ nama: '', stok: '', harga: '', status: '' })
   const [search, setSearch] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
   const router = useRouter()
 
-  // delay function untuk menunggu minimal 3 detik
   const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
   const fetchProducts = async () => {
     try {
       setIsLoading(true)
+      setError(null)
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-
-      // mulai waktu loading
       const startTime = Date.now()
 
-      const res = await fetch(`${baseUrl}/api/products`, {
-        cache: 'no-store',
-        next: { revalidate: 0 }
-      })
-
-      if (!res.ok) {
-        throw new Error(`Fetch gagal dengan status: ${res.status}`)
-      }
+      const res = await fetch(`${baseUrl}/api/products`, { cache: 'no-store', next: { revalidate: 0 } })
+      if (!res.ok) throw new Error(`Fetch gagal dengan status: ${res.status}`)
 
       const data = await res.json()
       setProducts(data)
 
-      // hitung waktu yg sudah berlalu
       const elapsed = Date.now() - startTime
-      if (elapsed < 3000) {
-        await delay(3000 - elapsed) // tunggu agar minimal 3 detik
-      }
-    } catch (error) {
+      if (elapsed < 3000) await delay(3000 - elapsed)
+    } catch (error: any) {
       console.error('FETCH ERROR:', error)
+      setError('Gagal memuat produk. Silakan coba lagi.')
     } finally {
       setIsLoading(false)
     }
@@ -55,7 +45,22 @@ export default function Table() {
     fetchProducts()
   }, [])
 
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(null), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [message])
+
+  // Saat search berubah, reset halaman ke 1
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [search])
+
   const handleEdit = (product: any) => {
+    if (!window.confirm(`Anda yakin ingin mengedit produk "${product.nama_produk}"?`)) {
+      return
+    }
     setEditId(product.id_produk)
     setEditForm({
       nama: product.nama_produk,
@@ -66,58 +71,105 @@ export default function Table() {
   }
 
   const handleSave = async (id: number) => {
-    await fetch(`/api/products/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nama_produk: editForm.nama,
-        stok: parseInt(editForm.stok),
-        harga: parseInt(editForm.harga),
-        status: editForm.status
+    try {
+      const res = await fetch(`/api/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nama_produk: editForm.nama,
+          stok: parseInt(editForm.stok),
+          harga: parseInt(editForm.harga),
+          status: editForm.status
+        })
       })
-    })
-    setEditId(null)
-    fetchProducts()
+      if (!res.ok) throw new Error(`Update gagal dengan status ${res.status}`)
+
+      setEditId(null)
+      fetchProducts()
+      setMessage('Produk berhasil diperbarui.')
+      setError(null)
+    } catch (error: any) {
+      console.error('SAVE ERROR:', error)
+      setError('Gagal menyimpan perubahan.')
+    }
   }
 
   const handleDelete = async (id: number) => {
-    await fetch(`/api/products/${id}`, { method: 'DELETE' })
-    fetchProducts()
+    if (!window.confirm('Anda yakin ingin menghapus produk ini?')) {
+      return
+    }
+    try {
+      const res = await fetch(`/api/products/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error(`Hapus gagal dengan status ${res.status}`)
+
+      fetchProducts()
+      setMessage('Produk berhasil dihapus.')
+      setError(null)
+    } catch (error: any) {
+      console.error('DELETE ERROR:', error)
+      setError('Gagal menghapus produk.')
+    }
   }
 
+  // Filter produk sesuai search
   const filteredProducts = useMemo(() => {
     return products.filter((p) =>
       p.nama_produk.toLowerCase().includes(search.toLowerCase())
     )
   }, [search, products])
 
+  // Pagination: hitung total halaman
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
+
+  // Ambil data produk untuk halaman sekarang
+  const currentProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return filteredProducts.slice(startIndex, startIndex + itemsPerPage)
+  }, [currentPage, filteredProducts])
+
+  // Render tombol nomor halaman (misal maksimal 5 tombol)
+  const renderPageNumbers = () => {
+    const maxPageButtons = 5
+    let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2))
+    let endPage = startPage + maxPageButtons - 1
+
+    if (endPage > totalPages) {
+      endPage = totalPages
+      startPage = Math.max(1, endPage - maxPageButtons + 1)
+    }
+
+    const pageButtons = []
+    for (let i = startPage; i <= endPage; i++) {
+      pageButtons.push(
+        <button
+          key={i}
+          onClick={() => setCurrentPage(i)}
+          className={`px-3 py-1 rounded ${i === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
+        >
+          {i}
+        </button>
+      )
+    }
+    return pageButtons
+  }
+
   return (
     <>
-      {/* CSS shimmer effect */}
       <style>
         {`
-          @keyframes shimmer {
-            0% {
-              background-position: 200% 0;
-            }
-            100% {
-              background-position: -200% 0;
-            }
-          }
-          .shimmer {
-            display: inline-block;
-            height: 16px;
-            border-radius: 4px;
-            background: linear-gradient(
-              90deg,
-              #f6f7f8 25%,
-              #edeef1 37%,
-              #f6f7f8 63%
-            );
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-          }
-        `}
+        @keyframes shimmer {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        .shimmer {
+          display: inline-block;
+          height: 16px;
+          border-radius: 4px;
+          background: linear-gradient(90deg, #f6f7f8 25%, #edeef1 37%, #f6f7f8 63%);
+          background-size: 200% 100%;
+          animation: shimmer 1.5s infinite;
+        }
+      `}
       </style>
 
       <div className="overflow-x-auto">
@@ -130,6 +182,20 @@ export default function Table() {
             + Tambah Produk
           </button>
         </div>
+
+        {/* Pesan sukses */}
+        {message && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 mb-4 rounded">
+            {message}
+          </div>
+        )}
+
+        {/* Pesan error */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 mb-4 rounded">
+            {error}
+          </div>
+        )}
 
         <div className="mb-4">
           <input
@@ -154,41 +220,24 @@ export default function Table() {
           </thead>
           <tbody>
             {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
+              Array.from({ length: itemsPerPage }).map((_, i) => (
                 <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  {/* Shimmer skeleton untuk setiap kolom dengan lebar berbeda agar natural */}
-                  <td className="px-4 py-2">
-                    <span className="shimmer" style={{ width: '70%' }}></span>
-                  </td>
-                  <td className="px-4 py-2">
-                    <span className="shimmer" style={{ width: '30%' }}></span>
-                  </td>
-                  <td className="px-4 py-2">
-                    <span className="shimmer" style={{ width: '40%' }}></span>
-                  </td>
-                  <td className="px-4 py-2">
-                    <span className="shimmer" style={{ width: '50%' }}></span>
-                  </td>
-                  <td className="px-4 py-2">
-                    <span className="shimmer" style={{ width: '50%' }}></span>
-                  </td>
-                  <td className="px-4 py-2">
-                    <span className="shimmer" style={{ width: '60%' }}></span>
-                  </td>
+                  {Array.from({ length: 6 }).map((_, j) => (
+                    <td key={j} className="px-4 py-2">
+                      <span className="shimmer" style={{ width: `${30 + j * 10}%` }}></span>
+                    </td>
+                  ))}
                 </tr>
               ))
-            ) : filteredProducts.length === 0 ? (
+            ) : currentProducts.length === 0 ? (
               <tr>
                 <td colSpan={6} className="text-center py-4 text-gray-500">
                   Tidak ditemukan produk yang cocok.
                 </td>
               </tr>
             ) : (
-              filteredProducts.map((product, index) => (
-                <tr
-                  key={product.id_produk}
-                  className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50 border-t'}
-                >
+              currentProducts.map((product, index) => (
+                <tr key={product.id_produk} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50 border-t'}>
                   <td className="px-4 py-2">
                     {editId === product.id_produk ? (
                       <input
@@ -240,26 +289,29 @@ export default function Table() {
                       product.status
                     )}
                   </td>
-                  <td className="px-4 py-2 space-x-2">
+                  <td className="px-4 py-2 space-x-2 flex items-center">
                     {editId === product.id_produk ? (
                       <button
                         onClick={() => handleSave(product.id_produk)}
-                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs"
+                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs flex items-center gap-1"
                       >
+                        <Save size={14} />
                         Simpan
                       </button>
                     ) : (
                       <button
                         onClick={() => handleEdit(product)}
-                        className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-xs"
+                        className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-xs flex items-center gap-1"
                       >
+                        <Pencil size={14} />
                         Edit
                       </button>
                     )}
                     <button
                       onClick={() => handleDelete(product.id_produk)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs flex items-center gap-1"
                     >
+                      <Trash2 size={14} />
                       Hapus
                     </button>
                   </td>
@@ -268,6 +320,29 @@ export default function Table() {
             )}
           </tbody>
         </table>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-4 space-x-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'}`}
+            >
+              Prev
+            </button>
+
+            {renderPageNumbers()}
+
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-200 hover:bg-gray-300'}`}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </>
   )
