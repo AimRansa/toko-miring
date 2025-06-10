@@ -8,31 +8,46 @@ datasource db {
 }
 
 model Customer {
-  id_customer  Int          @id @default(autoincrement())
+  id_customer   Int           @id @default(autoincrement())
   nama_customer String
-  email         String      @unique
+  email         String        @unique
   alamat        String?
   transactions  Transaction[]
 }
 
 model Product {
-  id_produk    Int          @id @default(autoincrement())
+  id_produk    Int           @id @default(autoincrement())
   nama_produk  String
   harga        Int
   stok         Int
   foto         String?
   deskripsi    String?
-  status       String       @default("Tersedia")
+  status       String        @default("Tersedia")
   transactions Transaction[]
 }
 
 model Transaction {
-  id_transaksi Int      @id @default(autoincrement())
+  id_transaksi Int       @id @default(autoincrement())
   id_produk    Int
   id_customer  Int
-  tanggal      DateTime @default(now())
+  tanggal      DateTime  @default(now())
   total_harga  Int
 
-  customer     Customer @relation(fields: [id_customer], references: [id_customer], onDelete: Cascade)
-  product      Product  @relation(fields: [id_produk], references: [id_produk], onDelete: Cascade)
+  customer     Customer  @relation(fields: [id_customer], references: [id_customer], onDelete: Cascade)
+  product      Product   @relation(fields: [id_produk], references: [id_produk], onDelete: Cascade)
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String
+  email     String   @unique
+  password  String
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
