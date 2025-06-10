@@ -22,6 +22,7 @@ export default function LoginPage() {
     if (res.ok) {
       localStorage.setItem('isLoggedIn', 'true')
       localStorage.setItem('role', data.user.role)
+      localStorage.setItem('email', data.user.email) // Tambahkan penyimpanan email
 
       if (data.user.role === 'ADMIN') {
         router.push('/admin/dashboard')
@@ -37,7 +38,13 @@ export default function LoginPage() {
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f1e29] via-[#1e2f38] to-[#a3b8b5]">
       <div className="flex flex-col md:flex-row items-center bg-transparent rounded-3xl p-6 md:p-12 shadow-2xl backdrop-blur-md">
         <div className="mb-6 md:mb-0 md:mr-12">
-          <Image src="/images/logos/toko.jpg" alt="Toko Miring Logo" width={250} height={250} className="rounded-3xl" />
+          <Image
+            src="/images/logos/toko.jpg"
+            alt="Toko Miring Logo"
+            width={250}
+            height={250}
+            className="rounded-3xl"
+          />
         </div>
 
         <div className="bg-white/10 p-8 rounded-3xl w-[320px]">
