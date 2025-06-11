@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -11,8 +11,33 @@ export default function SignUpPage() {
   const [password, setPassword] = useState('')
   const [role, setRole] = useState('CUSTOMER')
 
+  // CAPTCHA unik
+  const [captchaCode, setCaptchaCode] = useState('')
+  const [userCaptcha, setUserCaptcha] = useState('')
+
+  // Generate kode CAPTCHA saat pertama render
+  useEffect(() => {
+    generateCaptcha()
+  }, [])
+
+  const generateCaptcha = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    let code = ''
+    for (let i = 0; i < 5; i++) {
+      code += chars[Math.floor(Math.random() * chars.length)]
+    }
+    setCaptchaCode(code)
+  }
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validasi CAPTCHA
+    if (userCaptcha.toUpperCase() !== captchaCode) {
+      alert("Kode verifikasi salah!")
+      generateCaptcha()
+      return
+    }
 
     const res = await fetch('/api/auth/register', {
       method: 'POST',
@@ -26,6 +51,7 @@ export default function SignUpPage() {
       router.push('/login')
     } else {
       alert(data.error || 'Gagal mendaftar')
+      generateCaptcha()
     }
   }
 
@@ -67,6 +93,23 @@ export default function SignUpPage() {
               <option value="CUSTOMER">Customer</option>
               <option value="ADMIN">Admin</option>
             </select>
+
+            {/* CAPTCHA unik */}
+            <div className="text-white">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-mono text-xl tracking-widest bg-black/30 px-4 py-1 rounded">{captchaCode}</span>
+                <button type="button" onClick={generateCaptcha} className="text-sm underline ml-4 hover:text-gray-300">Refresh</button>
+              </div>
+              <input
+                type="text"
+                placeholder="Masukkan kode di atas"
+                value={userCaptcha}
+                onChange={(e) => setUserCaptcha(e.target.value)}
+                className="w-full pl-4 pr-4 py-2 bg-transparent border-b border-gray-300 text-white placeholder-gray-400 focus:outline-none focus:border-white"
+                required
+              />
+            </div>
+
             <button
               type="submit"
               className="w-full bg-gradient-to-b from-[#5b7773] to-[#1f2b2a] text-white font-semibold py-2 mt-4 rounded-full hover:opacity-90 transition"

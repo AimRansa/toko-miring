@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -10,7 +10,30 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  // CAPTCHA unik
+  const [captchaCode, setCaptchaCode] = useState('')
+  const [userCaptcha, setUserCaptcha] = useState('')
+
+  useEffect(() => {
+    generateCaptcha()
+  }, [])
+
+  const generateCaptcha = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    let code = ''
+    for (let i = 0; i < 5; i++) {
+      code += chars[Math.floor(Math.random() * chars.length)]
+    }
+    setCaptchaCode(code)
+  }
+
   const handleLogin = async () => {
+    if (userCaptcha.toUpperCase() !== captchaCode) {
+      alert('Kode verifikasi salah!')
+      generateCaptcha()
+      return
+    }
+
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -22,7 +45,7 @@ export default function LoginPage() {
     if (res.ok) {
       localStorage.setItem('isLoggedIn', 'true')
       localStorage.setItem('role', data.user.role)
-      localStorage.setItem('email', data.user.email) // Tambahkan penyimpanan email
+      localStorage.setItem('email', data.user.email)
 
       if (data.user.role === 'ADMIN') {
         router.push('/admin/dashboard')
@@ -31,6 +54,7 @@ export default function LoginPage() {
       }
     } else {
       alert(data.error || 'Login gagal')
+      generateCaptcha()
     }
   }
 
@@ -50,24 +74,37 @@ export default function LoginPage() {
         <div className="bg-white/10 p-8 rounded-3xl w-[320px]">
           <h2 className="text-center text-2xl font-bold text-white mb-6 drop-shadow">Login</h2>
           <div className="space-y-4">
-            <div className="relative">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-transparent border-b border-gray-300 text-white placeholder-gray-400 focus:outline-none focus:border-white"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-transparent border-b border-gray-300 text-white placeholder-gray-400 focus:outline-none focus:border-white"
+            />
+
+            {/* CAPTCHA unik */}
+            <div className="text-white">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-mono text-xl tracking-widest bg-black/30 px-4 py-1 rounded">{captchaCode}</span>
+                <button type="button" onClick={generateCaptcha} className="text-sm underline ml-4 hover:text-gray-300">Refresh</button>
+              </div>
               <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-transparent border-b border-gray-300 text-white placeholder-gray-400 focus:outline-none focus:border-white"
+                type="text"
+                placeholder="Masukkan kode di atas"
+                value={userCaptcha}
+                onChange={(e) => setUserCaptcha(e.target.value)}
+                className="w-full pl-4 pr-4 py-2 bg-transparent border-b border-gray-300 text-white placeholder-gray-400 focus:outline-none focus:border-white"
+                required
               />
             </div>
-            <div className="relative">
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-transparent border-b border-gray-300 text-white placeholder-gray-400 focus:outline-none focus:border-white"
-              />
-            </div>
+
             <button
               onClick={handleLogin}
               className="w-full bg-gradient-to-b from-[#5b7773] to-[#1f2b2a] text-white font-semibold py-2 mt-4 rounded-full hover:opacity-90 transition"
