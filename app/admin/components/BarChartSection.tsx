@@ -5,6 +5,15 @@ import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
 import BarChartComponent from "./BarChartComponent";
 
+type TransactionWithProduct = {
+  tanggal: Date;
+  total_harga: number;
+  product: {
+    nama_produk: string;
+  } | null;
+};
+
+
 export default async function BarChartSection() {
   await new Promise((resolve) => setTimeout(resolve, 5000)); // simulasi delay
 
@@ -14,7 +23,7 @@ export default async function BarChartSection() {
     include: { product: true },
   });
 
-  const dataChart = data.map((trx) => ({
+  const dataChart = data.map((trx: TransactionWithProduct) => ({
     tanggal: format(new Date(trx.tanggal), "dd MMM"),
     total: trx.total_harga,
     nama: trx.product?.nama_produk?.slice(0, 10) + "...",
