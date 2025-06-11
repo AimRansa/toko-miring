@@ -4,10 +4,10 @@ import { NextResponse } from "next/server";
 // Route handler untuk GET produk berdasarkan ID
 // GET produk berdasarkan ID
 export async function GET(
-  req: Request,
-  context: { params: { id: string } }
+  {req, params} : {req: Request,
+  params: { id: string } }
 ) {
-  const { id } = context.params;
+  const { id } = params;
   const idNumber = parseInt(id);
 
   if (isNaN(idNumber)) {
