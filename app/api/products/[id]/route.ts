@@ -1,15 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-// GET produk berdasarkan ID
-export async function GET(
-  req: Request,
-  context: { params: { id: string } }
-) {
-  const { id } = context.params;
-  const idNumber = parseInt(id);
+function getIdFromUrl(req: Request): number | null {
+  const url = new URL(req.url);
+  const id = url.pathname.split("/").pop();
+  const idNumber = parseInt(id || "");
 
-  if (isNaN(idNumber)) {
+  return isNaN(idNumber) ? null : idNumber;
+}
+
+// GET produk berdasarkan ID
+export async function GET(req: Request) {
+  const idNumber = getIdFromUrl(req);
+
+  if (idNumber === null) {
     return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
   }
 
@@ -29,22 +33,15 @@ export async function GET(
     return NextResponse.json(product);
   } catch (error) {
     console.error("Error fetching product:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch product" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch product" }, { status: 500 });
   }
 }
 
 // PUT untuk update produk
-export async function PUT(
-  req: Request,
-  context: { params: { id: string } }
-) {
-  const { id } = context.params;
-  const idNumber = parseInt(id);
+export async function PUT(req: Request) {
+  const idNumber = getIdFromUrl(req);
 
-  if (isNaN(idNumber)) {
+  if (idNumber === null) {
     return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
   }
 
@@ -64,22 +61,15 @@ export async function PUT(
     return NextResponse.json(updated);
   } catch (error) {
     console.error("Error updating product:", error);
-    return NextResponse.json(
-      { error: "Failed to update product" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
   }
 }
 
 // DELETE untuk menghapus produk
-export async function DELETE(
-  req: Request,
-  context: { params: { id: string } }
-) {
-  const { id } = context.params;
-  const idNumber = parseInt(id);
+export async function DELETE(req: Request) {
+  const idNumber = getIdFromUrl(req);
 
-  if (isNaN(idNumber)) {
+  if (idNumber === null) {
     return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
   }
 
@@ -91,9 +81,6 @@ export async function DELETE(
     return NextResponse.json({ message: "Product deleted successfully" });
   } catch (error) {
     console.error("Error deleting product:", error);
-    return NextResponse.json(
-      { error: "Failed to delete product" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
   }
 }
