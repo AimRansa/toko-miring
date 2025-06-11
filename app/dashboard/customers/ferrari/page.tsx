@@ -45,7 +45,8 @@ export default function FerrariPage() {
         const response = await fetch("/api/cars");
         if (!response.ok) throw new Error("Gagal mengambil data mobil.");
         const carData: Car[] = await response.json();
-        setCars(carData);
+        const ferrariCars = carData.filter(car => car.brand.toLowerCase() === "ferrari");
+        setCars(ferrariCars);
       } catch (error) {
         console.error("Error mengambil data mobil:", error);
       }
@@ -74,39 +75,22 @@ export default function FerrariPage() {
       <header className="flex justify-between items-center px-6 md:px-12 py-4 mb-8">
         <span className="text-lg font-semibold"></span>
         <nav className="flex gap-6 items-center">
-          <Link href="/dashboard/about" className="hover:underline">
-            About Us
-          </Link>
-          <button
-            onClick={() => handleProtectedClick(() => router.push("/dashboard/cart"))}
-            className="hover:underline"
-          >
-            Cart
-          </button>
-          <Link href="/dashboard/help" className="hover:underline">
-            Help
-          </Link>
+          <Link href="/dashboard/about" className="hover:underline">About Us</Link>
+          <button onClick={() => handleProtectedClick(() => router.push("/dashboard/cart"))} className="hover:underline">Cart</button>
+          <Link href="/dashboard/help" className="hover:underline">Help</Link>
           {!isLoggedIn ? (
             <Link href="/login">
-              <button className="bg-black text-white px-4 py-1 rounded-full hover:bg-gray-800 transition">
-                Login
-              </button>
+              <button className="bg-black text-white px-4 py-1 rounded-full hover:bg-gray-800 transition">Login</button>
             </Link>
           ) : (
             <div className="relative" ref={menuRef}>
               <button onClick={() => setMenuOpen(!menuOpen)} className="focus:outline-none">
-                <Image
-                  src="/images/profile.png"
-                  alt="Profil"
-                  width={32}
-                  height={32}
-                  className="rounded-full cursor-pointer"
-                />
+                <Image src="/images/profile.png" alt="Profil" width={32} height={32} className="rounded-full cursor-pointer" />
               </button>
               {menuOpen && (
                 <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                   <Link
-                    href="/dashboard/profile"
+                    href="/dashboard/customers/profile"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setMenuOpen(false)}
                   >
@@ -133,12 +117,17 @@ export default function FerrariPage() {
           muted
           loop
           playsInline
+          controls
           className="absolute top-0 left-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/40 text-white text-center px-6" />
+        >
+          Your browser does not support the video tag.
+        </video>
+        <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/40 text-white text-center px-6">
+          {/* Optional: Title atau Call to Action bisa ditambahkan di sini */}
+        </div>
       </section>
 
-      {/* Brand Logo */}
+      {/* Brand Logos */}
       <section className="mt-12 px-6 md:px-12">
         <div className="flex justify-start gap-6 mb-8">
           {[
@@ -157,17 +146,15 @@ export default function FerrariPage() {
 
       {/* Brand Description */}
       <section
-        className={`px-6 md:px-12 mb-16 transition-all duration-700 ease-out transform ${
-          carVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-        }`}
+        className={`px-6 md:px-12 mb-16 transition-all duration-700 ease-out transform ${carVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+          }`}
       >
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="space-y-6">
             <h1 className="text-5xl font-bold">Ferrari</h1>
             <p className="text-gray-800 text-sm leading-relaxed">
               Ferrari is an Italian luxury sports car manufacturer renowned for its high performance, iconic design, and rich racing heritage.
-              Founded in 1939 by Enzo Ferrari, the brand symbolizes speed, luxury, and advanced automotive technology. Ferrari is famous for its
-              exclusive and innovative cars, as well as its remarkable achievements in Formula 1 racing.
+              Founded in 1939 by Enzo Ferrari, the brand symbolizes speed, luxury, and advanced automotive technology.
             </p>
             <button
               onClick={() => router.push("/dashboard/customers/ferrari/show")}
@@ -197,7 +184,7 @@ export default function FerrariPage() {
       {/* Footer */}
       <footer className="bg-black text-white py-6 mt-auto px-6 md:px-12">
         <div className="container mx-auto flex flex-wrap justify-between gap-8">
-          {/* Lokasi */}
+          {/* Language */}
           <div>
             <h3 className="text-lg font-semibold">Wilayah & Bahasa Saat Ini</h3>
             <p>{language}</p>
@@ -235,15 +222,21 @@ export default function FerrariPage() {
           <div>
             <h3 className="text-lg font-semibold">Media Sosial</h3>
             <div className="flex gap-3 mt-2">
-              {["FB", "IG", "PN", "YT", "TW"].map((platform) => (
+              {[
+                { name: "FB", url: "https://facebook.com" },
+                { name: "IG", url: "https://instagram.com/steve_anggana" },
+                { name: "PN", url: "https://pinterest.com" },
+                { name: "YT", url: "https://youtube.com" },
+                { name: "TW", url: "https://twitter.com" },
+              ].map((platform) => (
                 <a
-                  key={platform}
-                  href="https://www.instagram.com/steve_anggana"
+                  key={platform.name}
+                  href={platform.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-gray-300 cursor-pointer"
                 >
-                  {platform}
+                  {platform.name}
                 </a>
               ))}
             </div>
