@@ -4,10 +4,10 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const id = Number(params.id)
+    const id = Number(context.params.id)
     const body = await req.json()
 
     const updated = await prisma.transaction.update({
@@ -26,10 +26,10 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const id = Number(params.id)
+    const id = Number(context.params.id)
 
     await prisma.transaction.delete({
       where: { id_transaksi: id },
