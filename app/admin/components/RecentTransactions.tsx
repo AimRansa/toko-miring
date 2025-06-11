@@ -3,7 +3,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
-import { Transaction, Customer, Product } from "@prisma/client";
+import type { Transaction, Customer, Product } from "@prisma/client";
 
 type TransaksiWithCustomerProduct = Transaction & {
   customer: Customer;
