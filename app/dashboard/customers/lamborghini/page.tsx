@@ -19,11 +19,18 @@ export default function LamborghiniPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [carVisible, setCarVisible] = useState(false);
   const [cars, setCars] = useState<Car[]>([]);
+  const [language, setLanguage] = useState<"id" | "en">("id"); // Tambahan
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   useEffect(() => {
     setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+
+    // Optional: Load saved language from localStorage
+    const savedLanguage = localStorage.getItem("language") as "id" | "en";
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
   }, []);
 
   useEffect(() => {
@@ -65,6 +72,12 @@ export default function LamborghiniPage() {
     } else {
       action();
     }
+  };
+
+  const handleChangeLanguage = () => {
+    const newLang = language === "id" ? "en" : "id";
+    setLanguage(newLang);
+    localStorage.setItem("language", newLang);
   };
 
   return (
@@ -125,15 +138,16 @@ export default function LamborghiniPage() {
       </header>
 
       {/* Video */}
-      <section className="px-6 md:px-12 mb-12">
+      <section className="relative w-full h-screen overflow-hidden mb-12">
         <video
           src="/videos/lamborghini.mp4"
-          controls
           autoPlay
           muted
           loop
-          className="w-full max-h-[500px] object-cover rounded-lg shadow-lg"
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover"
         />
+        <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/40 text-white text-center px-6" />
       </section>
 
       {/* Logo Brand */}
@@ -207,36 +221,46 @@ export default function LamborghiniPage() {
 
       {/* Footer */}
       <footer className="bg-black text-white py-6 mt-auto px-6 md:px-12">
-        <div className="container mx-auto flex flex-wrap justify-between">
+        <div className="container mx-auto flex flex-wrap justify-between gap-8">
           <div>
-            <h3 className="text-lg font-semibold">Current Region / Language</h3>
-            <p>United States / English</p>
-            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
-              Change
+            <h3 className="text-lg font-semibold">Wilayah & Bahasa Saat Ini</h3>
+            <p>{language === "id" ? "Indonesia / Bahasa Indonesia" : "United States / English"}</p>
+            <button onClick={handleChangeLanguage} className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
+              Ubah Bahasa
             </button>
           </div>
           <div>
             <h3 className="text-lg font-semibold">Newsletter</h3>
-            <p>Latest news directly in your inbox.</p>
+            <p>Dapatkan promo dan update terbaru dari Toko Miring langsung ke email Anda.</p>
             <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
-              Subscribe
+              Berlangganan
             </button>
           </div>
           <div>
-            <h3 className="text-lg font-semibold">Locations & Contacts</h3>
-            <p>Do you have any questions?</p>
-            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
-              Get in touch
-            </button>
+            <h3 className="text-lg font-semibold">Lokasi & Kontak</h3>
+            <p>Universitas Atma Jaya Yogyakarta, Indonesia</p>
+            <p>Email: idjo.@gmail.com</p>
+            <p>Telp: +62 812-3456-7890</p>
+            <Link href="/dashboard/help">
+              <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
+                Hubungi Kami
+              </button>
+            </Link>
           </div>
           <div>
-            <h3 className="text-lg font-semibold">Social Media</h3>
+            <h3 className="text-lg font-semibold">Media Sosial</h3>
             <div className="flex gap-3 mt-2">
-              <span className="cursor-pointer hover:text-gray-300">FB</span>
-              <span className="cursor-pointer hover:text-gray-300">IG</span>
-              <span className="cursor-pointer hover:text-gray-300">PN</span>
-              <span className="cursor-pointer hover:text-gray-300">YT</span>
-              <span className="cursor-pointer hover:text-gray-300">TW</span>
+              {["FB", "IG", "PN", "YT", "TW"].map((p) => (
+                <a
+                  key={p}
+                  href="https://www.instagram.com/steve_anggana"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-gray-300"
+                >
+                  {p}
+                </a>
+              ))}
             </div>
           </div>
         </div>

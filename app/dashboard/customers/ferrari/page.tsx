@@ -19,6 +19,8 @@ export default function FerrariPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [carVisible, setCarVisible] = useState(false);
   const [cars, setCars] = useState<Car[]>([]);
+  const [language, setLanguage] = useState("Indonesia / Bahasa Indonesia");
+
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -104,7 +106,7 @@ export default function FerrariPage() {
               {menuOpen && (
                 <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                   <Link
-                    href="/dashboard/customers/profile"
+                    href="/dashboard/profile"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setMenuOpen(false)}
                   >
@@ -123,19 +125,20 @@ export default function FerrariPage() {
         </nav>
       </header>
 
-      {/* Video */}
-      <section className="px-6 md:px-12 mb-12">
+      {/* Video Hero */}
+      <section className="relative w-full h-screen overflow-hidden mb-12">
         <video
           src="/videos/ferrari.mp4"
-          controls
           autoPlay
           muted
           loop
-          className="w-full max-h-[500px] object-cover rounded-lg shadow-lg"
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover"
         />
+        <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/40 text-white text-center px-6" />
       </section>
 
-      {/* Logo Brand */}
+      {/* Brand Logo */}
       <section className="mt-12 px-6 md:px-12">
         <div className="flex justify-start gap-6 mb-8">
           {[
@@ -152,18 +155,19 @@ export default function FerrariPage() {
         </div>
       </section>
 
-      {/* Deskripsi dan Gambar Mobil */}
+      {/* Brand Description */}
       <section
         className={`px-6 md:px-12 mb-16 transition-all duration-700 ease-out transform ${
           carVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
         }`}
       >
         <div className="grid md:grid-cols-2 gap-8 items-center">
-          {/* Text & Button */}
           <div className="space-y-6">
             <h1 className="text-5xl font-bold">Ferrari</h1>
             <p className="text-gray-800 text-sm leading-relaxed">
-              Ferrari is an Italian luxury sports car manufacturer renowned for its high performance, iconic design, and rich racing heritage. Founded in 1939 by Enzo Ferrari, the brand symbolizes speed, luxury, and advanced automotive technology. Ferrari is famous for its exclusive and innovative cars, as well as its remarkable achievements in Formula 1 racing.
+              Ferrari is an Italian luxury sports car manufacturer renowned for its high performance, iconic design, and rich racing heritage.
+              Founded in 1939 by Enzo Ferrari, the brand symbolizes speed, luxury, and advanced automotive technology. Ferrari is famous for its
+              exclusive and innovative cars, as well as its remarkable achievements in Formula 1 racing.
             </p>
             <button
               onClick={() => router.push("/dashboard/customers/ferrari/show")}
@@ -172,19 +176,11 @@ export default function FerrariPage() {
               Show more cars
             </button>
           </div>
-
-          {/* Gambar */}
-          <Image
-            src="/images/cars/ferrari.png"
-            alt="Mobil Ferrari"
-            width={700}
-            height={400}
-            className="rounded-none shadow-none"
-          />
+          <Image src="/images/cars/ferrari.png" alt="Mobil Ferrari" width={700} height={400} className="rounded-none shadow-none" />
         </div>
       </section>
 
-      {/* Daftar Mobil dari API */}
+      {/* Car List from API */}
       <section className="px-6 md:px-12 mb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cars.map((car) => (
@@ -192,13 +188,7 @@ export default function FerrariPage() {
               <h3 className="text-xl font-semibold">{car.name}</h3>
               <p className="text-sm text-gray-700">{car.description}</p>
               <p className="font-bold text-lg">Harga: Rp {car.price.toLocaleString()}</p>
-              <Image
-                src={car.imageUrl}
-                alt={car.name}
-                width={300}
-                height={200}
-                className="mt-2 rounded-lg"
-              />
+              <Image src={car.imageUrl} alt={car.name} width={300} height={200} className="mt-2 rounded-lg" />
             </div>
           ))}
         </div>
@@ -206,39 +196,60 @@ export default function FerrariPage() {
 
       {/* Footer */}
       <footer className="bg-black text-white py-6 mt-auto px-6 md:px-12">
-        <div className="container mx-auto flex flex-wrap justify-between">
+        <div className="container mx-auto flex flex-wrap justify-between gap-8">
+          {/* Lokasi */}
           <div>
             <h3 className="text-lg font-semibold">Wilayah & Bahasa Saat Ini</h3>
-            <p>United States / English</p>
-            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
+            <p>{language}</p>
+            <button
+              onClick={() =>
+                setLanguage((prev) =>
+                  prev === "Indonesia / Bahasa Indonesia" ? "United States / English" : "Indonesia / Bahasa Indonesia"
+                )
+              }
+              className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition"
+            >
               Ubah
             </button>
           </div>
+
+          {/* Newsletter */}
           <div>
             <h3 className="text-lg font-semibold">Newsletter</h3>
-            <p>Berita terbaru langsung ke kotak masuk Anda.</p>
-            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
-              Berlangganan
-            </button>
+            <p>Dapatkan promo dan update terbaru dari Toko Miring langsung ke email Anda.</p>
+            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">Berlangganan</button>
           </div>
+
+          {/* Kontak */}
           <div>
             <h3 className="text-lg font-semibold">Lokasi & Kontak</h3>
-            <p>Apakah Anda memiliki pertanyaan?</p>
-            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
-              Hubungi Kami
-            </button>
+            <p>Universitas Atma Jaya Yogyakarta, Indonesia</p>
+            <p>Email: idjo.@gmail.com</p>
+            <p>Telp: +62 812-3456-7890</p>
+            <Link href="/dashboard/help">
+              <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">Hubungi Kami</button>
+            </Link>
           </div>
+
+          {/* Media Sosial */}
           <div>
             <h3 className="text-lg font-semibold">Media Sosial</h3>
             <div className="flex gap-3 mt-2">
-              <span className="cursor-pointer hover:text-gray-300">FB</span>
-              <span className="cursor-pointer hover:text-gray-300">IG</span>
-              <span className="cursor-pointer hover:text-gray-300">PN</span>
-              <span className="cursor-pointer hover:text-gray-300">YT</span>
-              <span className="cursor-pointer hover:text-gray-300">TW</span>
+              {["FB", "IG", "PN", "YT", "TW"].map((platform) => (
+                <a
+                  key={platform}
+                  href="https://www.instagram.com/steve_anggana"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-gray-300 cursor-pointer"
+                >
+                  {platform}
+                </a>
+              ))}
             </div>
           </div>
         </div>
+
         <div className="text-center mt-6">© 2025 Toko Miring. All rights reserved.</div>
       </footer>
     </main>

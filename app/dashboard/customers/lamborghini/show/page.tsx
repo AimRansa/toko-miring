@@ -14,6 +14,10 @@ export default function LamborghiniPage() {
   const [cars, setCars] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const carsPerPage = 6;
+
   const router = useRouter();
 
   useEffect(() => {
@@ -43,6 +47,28 @@ export default function LamborghiniPage() {
     router.push(`/dashboard/customers/lamborghini/detail?id=${id}`);
   };
 
+  const filteredCars = cars.filter((car) =>
+    car.nama_produk.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredCars.length / carsPerPage);
+  const startIndex = (currentPage - 1) * carsPerPage;
+  const endIndex = startIndex + carsPerPage;
+  const paginatedCars = filteredCars.slice(startIndex, endIndex);
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   if (loading) {
     return (
       <main className="min-h-screen p-8 bg-gradient-to-b from-white to-teal-100 flex justify-center items-center">
@@ -68,28 +94,64 @@ export default function LamborghiniPage() {
         ← Back
       </button>
 
-      <h1 className="text-3xl font-bold mb-6">Lamborghini Models</h1>
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+        <h1 className="text-3xl font-bold">Lamborghini Models</h1>
+        <input
+          type="text"
+          placeholder="Search car name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full md:w-1/3 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-teal-600"
+        />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {cars.map((car) => (
-          <div
-            key={car.id_produk}
-            className="flex flex-col items-center text-center cursor-pointer hover:scale-105 transition"
-            onClick={() => handleCarClick(car.id_produk)}
-          >
-            <div className="w-full h-48 relative">
-              <Image
-                src="/images/cars/lamborghini.png"
-                alt={car.nama_produk}
-                fill
-                style={{ objectFit: "contain" }}
-              />
+        {paginatedCars.length > 0 ? (
+          paginatedCars.map((car) => (
+            <div
+              key={car.id_produk}
+              className="flex flex-col items-center text-center cursor-pointer hover:scale-105 transition"
+              onClick={() => handleCarClick(car.id_produk)}
+            >
+              <div className="w-full h-48 relative">
+                <Image
+                  src="/images/cars/lamborghini.png"
+                  alt={car.nama_produk}
+                  fill
+                  style={{ objectFit: "contain" }}
+                />
+              </div>
+              <p className="mt-4 font-semibold">{car.nama_produk}</p>
+              <p className="text-sm text-gray-600">From Rp {car.harga.toLocaleString()}</p>
             </div>
-            <p className="mt-4 font-semibold">{car.nama_produk}</p>
-            <p className="text-sm text-gray-600">From Rp {car.harga.toLocaleString()}</p>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="col-span-full text-center text-gray-500">No models found.</p>
+        )}
       </div>
+
+      {/* Pagination Controls */}
+      {filteredCars.length > carsPerPage && (
+        <div className="flex justify-center mt-8 gap-4">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-black text-white rounded disabled:bg-gray-300"
+          >
+            Previous
+          </button>
+          <span className="self-center">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-black text-white rounded disabled:bg-gray-300"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Review Section */}
       <section className="mt-16">

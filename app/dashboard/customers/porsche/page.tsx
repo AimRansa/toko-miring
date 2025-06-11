@@ -21,9 +21,12 @@ export default function PorschePage() {
   const [cars, setCars] = useState<Car[]>([]);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [language, setLanguage] = useState("id"); // default: Indonesia
 
   useEffect(() => {
-    setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+    if (typeof window !== "undefined") {
+      setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+    }
   }, []);
 
   useEffect(() => {
@@ -66,56 +69,35 @@ export default function PorschePage() {
     }
   };
 
+  const handleChangeLanguage = () => {
+    setLanguage((prev) => (prev === "id" ? "en" : "id"));
+  };
+
   return (
     <main className="flex flex-col bg-gradient-to-b from-white to-teal-100 min-h-screen">
       {/* Header */}
       <header className="flex justify-between items-center px-6 md:px-12 py-4 mb-8">
-        <span className="text-lg font-semibold"></span>
-        <nav className="flex gap-6 items-center">
-          <Link href="/dashboard/about" className="hover:underline">
-            About Us
-          </Link>
-          <button
-            onClick={() => handleProtectedClick(() => router.push("/dashboard/cart"))}
-            className="hover:underline"
-          >
+        <div className="text-lg font-bold"></div>
+
+        <nav className="flex gap-6 items-center ml-auto">
+          <Link href="/dashboard/about" className="hover:underline">About Us</Link>
+          <button onClick={() => handleProtectedClick(() => router.push("/dashboard/cart"))} className="hover:underline">
             Cart
           </button>
-          <Link href="/dashboard/help" className="hover:underline">
-            Help
-          </Link>
+          <Link href="/dashboard/help" className="hover:underline">Help</Link>
           {!isLoggedIn ? (
             <Link href="/login">
-              <button className="bg-black text-white px-4 py-1 rounded-full hover:bg-gray-800 transition">
-                Login
-              </button>
+              <button className="bg-black text-white px-4 py-1 rounded-full hover:bg-gray-800 transition">Login</button>
             </Link>
           ) : (
             <div className="relative" ref={menuRef}>
               <button onClick={() => setMenuOpen(!menuOpen)} className="focus:outline-none">
-                <Image
-                  src="/images/profile.png"
-                  alt="Profil"
-                  width={32}
-                  height={32}
-                  className="rounded-full cursor-pointer"
-                />
+                <Image src="/images/profile.png" alt="Profil" width={32} height={32} className="rounded-full cursor-pointer" />
               </button>
               {menuOpen && (
                 <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                  <Link
-                    href="/dashboard/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    Profil
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                  >
-                    Keluar
-                  </button>
+                  <Link href="/dashboard/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setMenuOpen(false)}>Profil</Link>
+                  <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Log out</button>
                 </div>
               )}
             </div>
@@ -123,68 +105,47 @@ export default function PorschePage() {
         </nav>
       </header>
 
-      {/* Video Hero */}
-      <section className="px-6 md:px-12 mb-12">
-        <video
-          src="/videos/porsche.mp4" // make sure this video exists
-          controls
-          autoPlay
-          muted
-          loop
-          className="w-full max-h-[500px] object-cover rounded-lg shadow-lg"
-        />
+
+      {/* Hero Video */}
+      <section className="relative w-full h-screen overflow-hidden mb-12">
+        <video src="/videos/porsche.mp4" autoPlay muted loop playsInline className="absolute top-0 left-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/40" />
       </section>
 
-      {/* Brand logos moved here, below video */}
+      {/* Brand logos */}
       <section className="mt-6 px-6 md:px-12">
         <div className="flex justify-start gap-6 mb-8">
           {[
-            { href: "/dashboard/customers/lamborghini", src: "/images/logos/lamborghini.png", alt: "Lamborghini Logo", isActive: false },
-            { href: "/dashboard/customers/porsche", src: "/images/logos/porsche.png", alt: "Porsche Logo", isActive: true },
-            { href: "/dashboard/customers/ferrari", src: "/images/logos/ferrari.png", alt: "Ferrari Logo", isActive: false },
-          ].map((logo) => (
-            <Link key={logo.alt} href={logo.href}>
-              <div className={`relative w-20 h-20 transition-all duration-300 ${!logo.isActive ? "grayscale hover:grayscale-0" : ""}`}>
-                <Image src={logo.src} alt={logo.alt} fill style={{ objectFit: "cover" }} className="p-2 m-2 flex items-center" />
+            { href: "/dashboard/customers/lamborghini", src: "/images/logos/lamborghini.png", isActive: false },
+            { href: "/dashboard/customers/porsche", src: "/images/logos/porsche.png", isActive: true },
+            { href: "/dashboard/customers/ferrari", src: "/images/logos/ferrari.png", isActive: false },
+          ].map(({ href, src, isActive }) => (
+            <Link key={src} href={href}>
+              <div className={`relative w-20 h-20 transition-all duration-300 ${!isActive ? "grayscale hover:grayscale-0" : ""}`}>
+                <Image src={src} alt="Logo" fill style={{ objectFit: "cover" }} className="p-2 m-2" />
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Description and Image side by side */}
-      <section
-        className={`px-6 md:px-12 mb-16 transition-all duration-700 ease-out transform ${
-          carVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
-        }`}
-      >
+      {/* Description */}
+      <section className={`px-6 md:px-12 mb-16 transition-all duration-700 ease-out transform ${carVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"}`}>
         <div className="grid md:grid-cols-2 gap-8 items-center">
-          {/* Text & Button */}
           <div className="space-y-6">
             <h1 className="text-5xl font-bold">Porsche</h1>
             <p className="text-gray-800 text-sm leading-relaxed">
               Porsche is a renowned German brand known for its high-performance sports cars, combining sleek design with advanced engineering and a rich racing heritage.
             </p>
-            <button
-              onClick={() => router.push("/dashboard/customers/porsche/show")}
-              className="bg-black text-white px-6 py-2 rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:bg-white hover:text-black hover:border hover:border-black"
-            >
+            <button onClick={() => router.push("/dashboard/customers/porsche/show")} className="bg-black text-white px-6 py-2 rounded-full hover:bg-white hover:text-black hover:border hover:border-black transition">
               Show more cars
             </button>
           </div>
-
-          {/* Image */}
-          <Image
-            src="/images/cars/porsche.png"
-            alt="Mobil Porsche"
-            width={700}
-            height={400}
-            className="rounded-none shadow-none"
-          />
+          <Image src="/images/cars/porsche.png" alt="Porsche Car" width={700} height={400} />
         </div>
       </section>
 
-      {/* List Porsche cars from API */}
+      {/* Car List */}
       <section className="px-6 md:px-12 mb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cars.map((car) => (
@@ -192,13 +153,7 @@ export default function PorschePage() {
               <h3 className="text-xl font-semibold">{car.name}</h3>
               <p className="text-sm text-gray-700">{car.description}</p>
               <p className="font-bold text-lg">Harga: Rp {car.price.toLocaleString()}</p>
-              <Image
-                src={car.imageUrl}
-                alt={car.name}
-                width={300}
-                height={200}
-                className="mt-2 rounded-lg"
-              />
+              <Image src={car.imageUrl} alt={car.name} width={300} height={200} className="mt-2 rounded-lg" />
             </div>
           ))}
         </div>
@@ -206,36 +161,40 @@ export default function PorschePage() {
 
       {/* Footer */}
       <footer className="bg-black text-white py-6 mt-auto px-6 md:px-12">
-        <div className="container mx-auto flex flex-wrap justify-between">
+        <div className="container mx-auto flex flex-wrap justify-between gap-8">
           <div>
             <h3 className="text-lg font-semibold">Wilayah & Bahasa Saat Ini</h3>
-            <p>United States / English</p>
-            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
-              Ubah
+            <p>{language === "id" ? "Indonesia / Bahasa Indonesia" : "United States / English"}</p>
+            <button onClick={handleChangeLanguage} className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
+              Ubah Bahasa
             </button>
           </div>
           <div>
             <h3 className="text-lg font-semibold">Newsletter</h3>
-            <p>Berita terbaru langsung ke kotak masuk Anda.</p>
+            <p>Dapatkan promo dan update terbaru dari Toko Miring langsung ke email Anda.</p>
             <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
               Berlangganan
             </button>
           </div>
           <div>
             <h3 className="text-lg font-semibold">Lokasi & Kontak</h3>
-            <p>Apakah Anda memiliki pertanyaan?</p>
-            <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
-              Hubungi Kami
-            </button>
+            <p>Universitas Atma Jaya Yogyakarta, Indonesia</p>
+            <p>Email: idjo.@gmail.com</p>
+            <p>Telp: +62 812-3456-7890</p>
+            <Link href="/dashboard/help">
+              <button className="mt-2 px-4 py-2 border border-white rounded hover:bg-gray-800 transition">
+                Hubungi Kami
+              </button>
+            </Link>
           </div>
           <div>
             <h3 className="text-lg font-semibold">Media Sosial</h3>
             <div className="flex gap-3 mt-2">
-              <span className="cursor-pointer hover:text-gray-300">FB</span>
-              <span className="cursor-pointer hover:text-gray-300">IG</span>
-              <span className="cursor-pointer hover:text-gray-300">PN</span>
-              <span className="cursor-pointer hover:text-gray-300">YT</span>
-              <span className="cursor-pointer hover:text-gray-300">TW</span>
+              {["FB", "IG", "PN", "YT", "TW"].map((p) => (
+                <a key={p} href="https://www.instagram.com/steve_anggana" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300">
+                  {p}
+                </a>
+              ))}
             </div>
           </div>
         </div>
