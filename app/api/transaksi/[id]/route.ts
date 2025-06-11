@@ -1,14 +1,13 @@
 // app/api/transaksi/[id]/route.ts
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
 
 export async function PUT(
-  req: NextRequest,
-  context: { params: { id: string } }
+  req: Request,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id = Number(context.params.id)
+    const id = Number(params.id)
     const body = await req.json()
 
     const updated = await prisma.transaction.update({
@@ -26,11 +25,11 @@ export async function PUT(
 }
 
 export async function DELETE(
-  req: NextRequest,
-  context: { params: { id: string } }
+  req: Request,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id = Number(context.params.id)
+    const id = Number(params.id)
 
     await prisma.transaction.delete({
       where: { id_transaksi: id },
