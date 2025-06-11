@@ -25,7 +25,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ user })
+    // Jika role adalah CUSTOMER, bisa lanjut fetch data lain jika mau (opsional)
+    // Contoh: ambil data alamat dari model Customer
+    let customerData = null
+    if (user.role === 'CUSTOMER') {
+      const customer = await prisma.customer.findUnique({
+        where: { email: user.email },
+        select: {
+          id_customer: true,
+          nama_customer: true,
+          alamat: true,
+        },
+      })
+
+      if (customer) {
+        customerData = customer
+      }
+    }
+
+    return NextResponse.json({ user, customer: customerData })
   } catch (error) {
     console.error('Profile fetch error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
