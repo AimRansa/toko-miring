@@ -1,18 +1,20 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma'; // pastikan kamu punya file ini
+import { prisma } from '@/lib/prisma';
 
 // Handler PUT untuk update transaksi berdasarkan ID
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request) {
   try {
-    const id = params.id;
+    // Ambil ID dari URL
+    const url = new URL(request.url!);
+    const id = url.pathname.split('/').pop(); // ambil id dari /api/transaksi/[id]
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID tidak ditemukan di URL' }, { status: 400 });
+    }
 
     // Ambil data dari request body
     const body = await request.json();
 
-    // Contoh: validasi data body (opsional, tergantung field kamu)
     const { status, total, tanggal_transaksi } = body;
 
     // Update transaksi di database
@@ -21,7 +23,7 @@ export async function PUT(
       data: {
         status,
         total,
-        tanggal_transaksi: new Date(tanggal_transaksi), // pastikan ini valid
+        tanggal_transaksi: new Date(tanggal_transaksi),
       },
     });
 
