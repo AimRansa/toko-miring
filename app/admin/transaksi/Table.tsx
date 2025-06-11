@@ -15,44 +15,59 @@ export default function Table() {
   const [transaksi, setTransaksi] = useState<Transaksi[]>([])
   const [loading, setLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
+  const itemsPerPage = 5
+
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 3000))
+      const res = await fetch(`/api/transaksi?search=${encodeURIComponent(search)}`, {
+        cache: 'no-store',
+      })
+      const data = await res.json()
+      setTransaksi(data)
+      setCurrentPage(1)
+    } catch (error) {
+      console.error('Gagal fetch data transaksi:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      const fetchData = async () => {
-        setLoading(true)
-        try {
-          await new Promise((resolve) => setTimeout(resolve, 3000))
-
-          const res = await fetch(`/api/transaksi?search=${encodeURIComponent(search)}`, {
-            cache: 'no-store',
-          })
-          const data = await res.json()
-          setTransaksi(data)
-          setCurrentPage(1) // reset ke halaman 1 kalau data baru masuk
-        } catch (error) {
-          console.error('Gagal fetch data transaksi:', error)
-        } finally {
-          setLoading(false)
-        }
-      }
-
       fetchData()
     }, 300)
 
     return () => clearTimeout(delayDebounce)
   }, [search])
 
-  // Hitung total halaman
+  const handleDelete = async (id: number) => {
+    const confirm = window.confirm('Yakin ingin menghapus transaksi ini?')
+    if (!confirm) return
+
+    try {
+      const res = await fetch(`/api/transaksi/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (!res.ok) throw new Error('Gagal menghapus transaksi')
+
+      // Refresh data
+      fetchData()
+    } catch (error) {
+      console.error('Error deleting transaksi:', error)
+      alert('Gagal menghapus transaksi.')
+    }
+  }
+
   const totalPages = Math.ceil(transaksi.length / itemsPerPage)
 
-  // Ambil transaksi untuk halaman sekarang
   const currentTransactions = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage
     return transaksi.slice(startIndex, startIndex + itemsPerPage)
   }, [currentPage, transaksi])
 
-  // Render tombol halaman (maks 5 tombol)
   const renderPageNumbers = () => {
     const maxPageButtons = 5
     let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2))
@@ -99,24 +114,27 @@ export default function Table() {
             <th className="px-4 py-2 text-left">Produk</th>
             <th className="px-4 py-2 text-left">Tanggal</th>
             <th className="px-4 py-2 text-left">Total</th>
+            <th className="px-4 py-2 text-left">Aksi</th>
           </tr>
         </thead>
         <tbody>
           {loading ? (
             Array.from({ length: itemsPerPage }).map((_, i) => (
               <tr key={i} className="border-t border-gray-300">
-                {['w-3/4', 'w-2/3', 'w-1/2', 'w-2/3', 'w-1/2', 'w-3/4'].map((width, idx) => (
-                  <td key={idx} className="px-4 py-2">
-                    <div className="shimmer-wrapper h-4 rounded w-full relative overflow-hidden bg-gray-200">
-                      <div className="shimmer"></div>
-                    </div>
-                  </td>
-                ))}
+                {Array(7)
+                  .fill(0)
+                  .map((_, idx) => (
+                    <td key={idx} className="px-4 py-2">
+                      <div className="shimmer-wrapper h-4 rounded w-full relative overflow-hidden bg-gray-200">
+                        <div className="shimmer"></div>
+                      </div>
+                    </td>
+                  ))}
               </tr>
             ))
           ) : currentTransactions.length === 0 ? (
             <tr>
-              <td colSpan={6} className="text-center py-4 text-gray-500">
+              <td colSpan={7} className="text-center py-4 text-gray-500">
                 Belum ada transaksi.
               </td>
             </tr>
@@ -129,13 +147,20 @@ export default function Table() {
                 <td className="px-4 py-2">{item.product.nama_produk}</td>
                 <td className="px-4 py-2">{item.tanggal.slice(0, 10)}</td>
                 <td className="px-4 py-2">Rp{item.total_harga.toLocaleString()}</td>
+                <td className="px-4 py-2">
+                  <button
+                    onClick={() => handleDelete(item.id_transaksi)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
+                    Hapus
+                  </button>
+                </td>
               </tr>
             ))
           )}
         </tbody>
       </table>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-4 space-x-2">
           <button
@@ -147,9 +172,7 @@ export default function Table() {
           >
             Prev
           </button>
-
           {renderPageNumbers()}
-
           <button
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}

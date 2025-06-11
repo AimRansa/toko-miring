@@ -13,7 +13,7 @@ export default function Table() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
+  const itemsPerPage = 5
   const router = useRouter()
 
   const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
