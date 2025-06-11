@@ -40,7 +40,7 @@ export async function GET(
 // PUT untuk update produk
 export async function PUT(
   req: Request,
-  context: { params: { id: string } }
+  context: any
 ) {
   const { id } = context.params;
   const idNumber = parseInt(id);
@@ -75,7 +75,7 @@ export async function PUT(
 // DELETE untuk menghapus produk
 export async function DELETE(
   req: Request,
-  context: { params: { id: string } }
+  context: any
 ) {
   const { id } = context.params;
   const idNumber = parseInt(id);
