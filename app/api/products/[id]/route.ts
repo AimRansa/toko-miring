@@ -1,77 +1,36 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma'; // pastikan kamu punya file ini
 
-function getIdFromUrl(req: Request): number | null {
-  const url = new URL(req.url);
-  const id = url.pathname.split("/").pop();
-  const idNumber = parseInt(id || "");
-  return isNaN(idNumber) ? null : idNumber;
-}
-
-export async function GET(req: Request) {
-  const idNumber = getIdFromUrl(req);
-
-  if (idNumber === null) {
-    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
-  }
-
+// Handler PUT untuk update transaksi berdasarkan ID
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const transaksi = await prisma.transaksi.findUnique({
-      where: { id_transaksi: idNumber },
-    });
+    const id = params.id;
 
-    if (!transaksi) {
-      return NextResponse.json({ error: "Transaksi not found" }, { status: 404 });
-    }
+    // Ambil data dari request body
+    const body = await request.json();
 
-    return NextResponse.json(transaksi);
-  } catch (error) {
-    console.error("Error fetching transaksi:", error);
-    return NextResponse.json({ error: "Failed to fetch transaksi" }, { status: 500 });
-  }
-}
+    // Contoh: validasi data body (opsional, tergantung field kamu)
+    const { status, total, tanggal_transaksi } = body;
 
-export async function PUT(req: Request) {
-  const idNumber = getIdFromUrl(req);
-
-  if (idNumber === null) {
-    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
-  }
-
-  try {
-    const data = await req.json();
-
-    const updated = await prisma.transaksi.update({
-      where: { id_transaksi: idNumber },
+    // Update transaksi di database
+    const updatedTransaksi = await prisma.transaksi.update({
+      where: { id },
       data: {
-        // isi datanya sesuai kebutuhanmu
-        status: data.status,
-        total: data.total,
+        status,
+        total,
+        tanggal_transaksi: new Date(tanggal_transaksi), // pastikan ini valid
       },
     });
 
-    return NextResponse.json(updated);
+    return NextResponse.json(updatedTransaksi, { status: 200 });
   } catch (error) {
-    console.error("Error updating transaksi:", error);
-    return NextResponse.json({ error: "Failed to update transaksi" }, { status: 500 });
-  }
-}
-
-export async function DELETE(req: Request) {
-  const idNumber = getIdFromUrl(req);
-
-  if (idNumber === null) {
-    return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
-  }
-
-  try {
-    await prisma.transaksi.delete({
-      where: { id_transaksi: idNumber },
-    });
-
-    return NextResponse.json({ message: "Transaksi deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting transaksi:", error);
-    return NextResponse.json({ error: "Failed to delete transaksi" }, { status: 500 });
+    console.error('Gagal update transaksi:', error);
+    return NextResponse.json(
+      { error: 'Gagal update transaksi' },
+      { status: 500 }
+    );
   }
 }
